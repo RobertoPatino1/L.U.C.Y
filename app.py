@@ -220,8 +220,6 @@ def main():
     {podcasts}\n
     Vamos cuéntame, de qué quieres hablar conmigo hoy 😊
     """
-    # Display assistant response in chat message container
-    user = st.chat_input('Esperando de ti una respuesta 🐼')
 
     coach = st.chat_message("assistant", avatar='👩')
     coach.write(initial_message.format(podcasts="\n".join([d['name'] for d in initial_podcast_list])))
@@ -292,6 +290,38 @@ def main():
     #                 message_placeholder.markdown(full_response + "▌")
     #             message_placeholder.markdown(full_response)
     #             st.session_state.messages.append({"role": "assistant", "content": full_response})
+
+    # Accept user input
+    if prompt := st.chat_input("¿Qué tal?, cuéntame, estoy para escucharte!"):
+        if len(st.session_state.messages) > 0:
+            # Add user message to chat history
+            st.session_state.messages.append({"role": "user", "content": prompt})
+        else:
+            # Asimilar spotify search al empezar el chat
+            message_embedding = get_embedding(prompt)
+            paragraph_emb_df = get_embeddings()
+            similarities = search(message_embedding, paragraph_emb_df)
+            
+            custom_prompt = template.format(message=prompt, experts=similarities)
+            st.session_state.messages.append({"role": "user", "content": custom_prompt})
+        # Display user message in chat message container
+        with st.chat_message("user", '🗿'):
+            st.markdown(prompt)
+        # Display assistant response in chat message container
+        with st.chat_message("assistant", '👩'):
+            message_placeholder = st.empty()
+            full_response = ""
+
+        for response in openai.ChatCompletion.create(
+            model=st.session_state["openai_model"],
+            messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
+            stream=True,
+            allow_fallback=True
+        ):
+            full_response += response.choices[0].delta.get("content", "")
+            message_placeholder.markdown(full_response + "▌")
+        message_placeholder.markdown(full_response)
+        st.session_state.messages.append({"role": "assistant", "content": full_response})
 
     
 

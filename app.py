@@ -1,29 +1,10 @@
 import streamlit as st
 import openai
-import numpy as np
 import json
-import pandas as pd
 import os
-from PIL import Image
+import podcast_downloader.helpers as hp
 from podcast_downloader.podcast import Podcast
-import dateutil.parser
-
-def search(message_embedding, paragraph_emb_df, q_results = 5):
-    paragraph_emb_df['similarity'] = paragraph_emb_df['embedding'].apply(lambda x: cosine_similarity(x, message_embedding))
-    paragraph_emb_df.sort_values('similarity', ascending=False)
-    return paragraph_emb_df.iloc[:q_results]['paragraph'].values
-
-def get_embedding(text, model="text-embedding-ada-002"):
-    text = text.replace("\n", " ")
-    return openai.Embedding.create(input = text, model=model)['data'][0]['embedding']
-
-def cosine_similarity(a, b):
-    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
-
-def load_json(EPISODE_PATH):
-    with open(EPISODE_PATH, 'r') as f:
-        dictionary = json.load(f) 
-    return dictionary
+from podcast_downloader.helpers import slugify, cosine_similarity, get_embedding
 
 def save_podcast_data(podcast_list):
     l_podcast_json = {'podcast_list':podcast_list}
@@ -31,7 +12,6 @@ def save_podcast_data(podcast_list):
     with open(json_path, 'w') as f:
         json.dump(l_podcast_json, f)
 
-        
 def select_settings(podcast_list):
     # Session State initializing
     if 'store' not in st.session_state:
@@ -80,9 +60,36 @@ def get_podcast_list(raw_podcast_list):
 def get_episodes_metadata(podcast_items):
     episode_urls = [podcast.find('enclosure')['url'] for podcast in podcast_items]
     episode_titles = [podcast.find('title').text for podcast in podcast_items]
-    episode_release_dates = [parse_date(podcast.find('pubDate').text) for podcast in podcast_items]
-    episode_descriptions = [podcast.find('description').text for podcast in podcast_items]
-    return list(zip(episode_urls, episode_titles, episode_release_dates, episode_descriptions))
+    return list(zip(episode_urls, episode_titles))
+
+def get_matched_paragraphs(raw_podcast_list, message_embedding, TOP_LIMIT = 2):
+    
+    matched_paragraphs = []
+    # Obtener arreglo con objetos tipo podcast
+    podcast_list = [Podcast(raw_podcast['name'], raw_podcast['rss_feed_url']) for raw_podcast in raw_podcast_list]
+
+    for podcast in podcast_list:
+        # Actualizar description_embeddings del podcast
+        podcast.update_description_embeddings()
+        # Obtengo la metadata de top_limit = 2 episodios con mayor similitud
+        podcast_items = podcast.search_items(message_embedding, TOP_LIMIT = 2)
+        episodes_metadata = get_episodes_metadata(podcast_items)
+        
+        for episode in episodes_metadata:
+            url, title = episode
+            episode_path = f'{slugify(title)}.json'
+
+            # Actualizar paragraph_embbeddings
+            podcast.update_paragraph_embeddings(episode_path, url)
+            # Obtener el paragraph_embeddings del episodio
+            paragraph_embeddings = podcast.get_paragraph_embeddings(episode_path)
+            paragraph_embeddings_sorted = sorted(paragraph_embeddings, 
+                                                key = lambda x: cosine_similarity(x['embedding'], message_embedding),
+                                                reverse=True)
+
+            matched_paragraphs += [x['paragraph'] for x in paragraph_embeddings_sorted[:TOP_LIMIT]]
+        
+    return matched_paragraphs
 
 
 def main():
@@ -92,11 +99,12 @@ def main():
         page_title="Chatty", page_icon="🎯")
     
     # Empezar el chat inicial informativo del bot 
-    podcast_downloader_dir = './podcast_downloader'
+    podcast_downloader_dir = hp.get_base_dir()
     podcast_list_path = f'{podcast_downloader_dir}/podcast_list.json'
 
     # Obtener los podcast disponibles
-    raw_podcast_list = load_json(podcast_list_path)['podcast_list']
+    with open(podcast_list_path, 'r') as f:
+        raw_podcast_list = json.load(f)['podcast_list']
 
     # Inicializar podcast_list en streamlit session
     if not 'podcast_list' in st.session_state:
@@ -156,38 +164,8 @@ def main():
         else:
             # Asimilar spotify search al empezar el chat
             message_embedding = get_embedding(prompt)
-            
-
-
-
-
-
-            # Obtener arreglo con objetos tipo podcast
-            podcast_list = [Podcast(raw_podcast['name'], raw_podcast['rss_feed_url']) for raw_podcast in raw_podcast_list]
-
-            for podcast in podcast_list:
-                # Obtengo la metadata de top_limit = 2 episodios con mayor similitud
-                podcast_items = podcast.search_items(message_embedding, top_limit = 2)
-                episodes_metadata = get_episodes_metadata(podcast_items)
-                
-                for episode in episodes_metadata:
-                    url, title, release_date, description = episode
-
-                    
-
-
-
-
-
-
-
-
-
-
-            paragraph_emb_df = get_embeddings(message_embedding)
-            similarities = search(message_embedding, paragraph_emb_df)
-            
-            custom_prompt = template.format(message=prompt, experts=similarities)
+            matched_paragraphs = get_matched_paragraphs(raw_podcast_list, message_embedding)
+            custom_prompt = template.format(message=prompt, experts="\n".join(matched_paragraphs))
             st.session_state.messages.append({"role": "user", "content": custom_prompt})
         # Display user message in chat message container
         with st.chat_message("user", '🗿'):

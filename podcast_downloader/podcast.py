@@ -1,19 +1,12 @@
 import requests
 import os
-import re
 from bs4 import BeautifulSoup
-import openai
-import numpy as np
-from dotenv import load_dotenv, find_dotenv
 import time
 import json
-import unicodedata
 import helpers
-from helpers import slugify
-
-load_dotenv(find_dotenv())
-openai.api_key = os.getenv("OPENAI_API_KEY")
-openai.api_base = os.getenv("API_BASE")
+import re
+from helpers import slugify, cosine_similarity, get_embedding
+import subprocess
 
 class Podcast:
     def __init__(self, name, rss_feed_url):
@@ -33,61 +26,34 @@ class Podcast:
             if not os.path.exists(dir):
                 os.makedirs(dir)
 
-    def get_items(self):
-        page = requests.get(self.rss_feed_url)
-        soup = BeautifulSoup(page.text, 'xml')
-        return soup.find_all('item')
-
-    def get_embedding(self, text, model="text-embedding-ada-002"):
-        text = text.replace("\n", " ")
-        return openai.Embedding.create(input = text, model=model)['data'][0]['embedding']
-    
-    def cosine_similarity(self, a, b):
-        return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
-    
-    def simplify_title(self):
-        file_name = re.sub(r'[%/&!@#\*\$\?\+\^\\.\\\\]', '', self.name)[:100].replace(' ', '_')
-        return file_name
-    
-
-    def save_description_embeddings(self, description_embeddings):
-        description_embeddings_json = {'description_embeddings':description_embeddings}
-        with open(self.description_embeddings_path, 'w') as f:
-                json.dump(description_embeddings_json, f)
-
-    def add_description_embeddings(self, items_limit):
-        # Obtener el arreglo de description_embeddings
-        description_embeddings = self.get_description_embeddings()['description_embeddings']
+    def search_items(self, search_embedding, TOP_LIMIT=2):
         # Obtener los episodios del podcast
         items = self.get_items()
-        i = 0
-        for item in items:
-            title = item.find('title').text
-            # Obtener la descripción del episodio
-            description = item.find('description').text
-            soup = BeautifulSoup(description, 'html.parser')
-            description = "\n".join([p.get_text(strip=True) for p in soup.find_all('p')])
 
-            if (len(description_embeddings) == 0 or title not in [d['title'] for d in description_embeddings]) and i < items_limit:
-                # Dormir el lazo 8 segundos por cada 10 embeddings
-                if (i % 9 == 0):
-                    time.sleep(8)
-                # Obtener el embedding de la descripción del episodio
-                description_embedding = self.get_embedding(description)
-                # Agregar la descripción del episodio con su embedding
-                description_embeddings += [{'title': title, 
-                                            'description': description,
-                                            'embedding': description_embedding}]
-                i += 1
-        # Actualizar description_embeddings
-        self.save_description_embeddings(description_embeddings)
+        # Obtener description_embeddings
+        description_embeddings = self.get_description_embeddings()
+
+        # Sorting de description_embeddings
+        sorted_description_embeddings = sorted(description_embeddings, 
+                                               key=lambda x: cosine_similarity(x['embedding'], search_embedding), 
+                                               reverse=True)
+        
+        # Obtener los títulos de todos los podcasts
+        items_titles = [podcast.find('title').text for podcast in items]
+        # Obtener los episodios indexados por título
+        matched_podcasts = []
+        for description_embedding in sorted_description_embeddings[:TOP_LIMIT]:
+            title_index = items_titles.index(description_embedding['title'])
+            matched_podcasts += [items[title_index]]
+
+        return matched_podcasts
 
     def get_description_embeddings(self):
         description_embeddings = None
 
         # Declarar el archivo de embeddings de las descripciones de los episodios
-        base_path = './podcast_downloader'
-        description_embeddings_dir = f'{base_path}/description_embeddings'
+        base_dir = helpers.get_base_dir()
+        description_embeddings_dir = f'{base_dir}/description_embeddings'
         if not os.path.exists(description_embeddings_dir):
             os.mkdir(description_embeddings_dir)  
         
@@ -101,29 +67,104 @@ class Podcast:
                 description_embeddings = json.load(f)['description_embeddings']
 
         return description_embeddings
-    
-    def search_items(self, search_embedding, top_limit=2, items_limit=10):
+
+    def get_items(self):
+        page = requests.get(self.rss_feed_url)
+        soup = BeautifulSoup(page.text, 'xml')
+        return soup.find_all('item')
+
+    def save_description_embeddings(self, description_embeddings):
+        description_embeddings_json = {'description_embeddings': description_embeddings}
+        with open(self.description_embeddings_path, 'w') as f:
+                json.dump(description_embeddings_json, f)
+
+    def update_description_embeddings(self, items_limit=10):
+        # Obtener el arreglo de description_embeddings
+        description_embeddings = self.get_description_embeddings()
         # Obtener los episodios del podcast
         items = self.get_items()
+        i = 0
 
-        # Agregar description_embeddings 
-        self.add_description_embeddings(items_limit)
-        description_embeddings = self.get_description_embeddings()
+        while i < items_limit:
+            item = items[i]
+            title = item.find('title').text
+            if (len(description_embeddings) == 0 ^ title not in [d['title'] for d in description_embeddings]):
+                # Dormir el lazo 8 segundos por cada 10 embeddings
+                if ((i+1) % 10 == 0):
+                    time.sleep(8)
+                # Obtener la descripción del episodio
+                description = item.find('description').text
+                soup = BeautifulSoup(description, 'html.parser')
+                description = "\n".join([p.get_text(strip=True) for p in soup.find_all('p')])
+                # Obtener el embedding de la descripción del episodio
+                description_embedding = get_embedding(description)
+                # Agregar la descripción del episodio con su embedding
+                description_embeddings += [{'title': title, 
+                                            'description': description,
+                                            'embedding': description_embedding}]
+                i += 1
+            elif (len(description_embeddings) == len(items)):
+                i = items_limit
+            
+        # Actualizar description_embeddings
+        self.save_description_embeddings(description_embeddings)
+    
+    def get_paragraph_embeddings(self, episode_path):
+        paragraph_embeddings = None
+        paragraph_embeddings_path = f'{self.paragraph_embeddings_directory}/{episode_path}'
 
-        # Sorting de description_embeddings
-        sorted_description_embeddings = sorted(description_embeddings, 
-                                               key=lambda x: self.cosine_similarity(x['embedding'], search_embedding), 
-                                               reverse=True)
+        if not os.path.exists(paragraph_embeddings_path):
+            paragraph_embeddings = []
+            self.save_paragraph_embeddings(paragraph_embeddings, episode_path)
+        else:
+            with open(paragraph_embeddings_path, 'r') as f:
+                paragraph_embeddings = json.load(f)['paragraph_embeddings']
+
+    def save_paragraph_embeddings(self, paragraph_embeddings, episode_path):
+        paragraph_embeddings_json = {'paragraph_embeddings': paragraph_embeddings}
+        with open(f'{self.paragraph_embeddings_directory}/{episode_path}', 'w') as f:
+            json.dump(paragraph_embeddings_json, f)
+
+    def update_paragraph_embeddings(self, episode_path, url, paragraphs_limit = 10):
+        transcripts_paths = os.listdir(self.transcription_directory)
+        paragraph_embeddings = self.get_paragraph_embeddings(episode_path)
         
-        # Obtener los títulos de todos los podcasts
-        items_titles = [podcast.find('title').text for podcast in items]
-        # Obtener los episodios indexados por título
-        matched_podcasts = []
-        for description_embedding in sorted_description_embeddings[:top_limit]:
-            title_index = items_titles.index(description_embedding['title'])
-            matched_podcasts += [items[title_index]]
+        if episode_path not in transcripts_paths:
+            base_dir = helpers.get_base_dir()
+            download_episode_path = f'{self.download_directory}/{re.sub(r"[.]json$", ".mp3",episode_path)}'
 
-        return matched_podcasts
+            episode_metadata_json = {'url': url, 'download_episode_path': download_episode_path}
+            with open(f'{base_dir}/podcast_metadata', 'w') as f:
+                json.dump(episode_metadata_json, f)
+            
+            subprocess.run(f'{base_dir}/run_all.sh')
+            
+        with open(f'{self.transcription_directory}/{episode_path}', 'r') as f:
+            paragraphs = [x['text'] for x in json.load(f)['paragraphs']]
+
+        i = 0 
+        while i < paragraphs_limit:
+            if ((i+1) % 10 == 0):
+                time.sleep(8)
+            
+            if (len(paragraph_embeddings) > 0 ^ paragraphs[i] not in [x['paragraph'] for x in paragraph_embeddings]):
+                paragraph_embeddings += [{'paragraph': paragraphs[i] , 'embedding': get_embedding(paragraphs[i])}]
+                i += 1
+            elif (len(paragraph_embeddings) == len(paragraphs)):
+                i = paragraphs_limit
+        self.save_paragraph_embeddings(paragraph_embeddings, episode_path)
+        
+            
+
+
+
+
+
+        
+
+    
+    
+    
 
             
         

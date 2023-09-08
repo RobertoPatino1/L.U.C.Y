@@ -3,11 +3,8 @@ import json
 import time
 import requests
 from podcast import Podcast
-import sys
-
-from dotenv import load_dotenv, find_dotenv
-
-load_dotenv(find_dotenv())
+import helpers
+import streamlit as st
 
 def create_transcripts(podcast_list, **kwargs):
 	all_transcription_metadata = {}
@@ -18,6 +15,8 @@ def create_transcripts(podcast_list, **kwargs):
 			print("Uploading", download)
 			file_path = f'{podcast.download_directory}/{download}'
 			content_url = upload_to_assembly_ai(file_path)
+			# Limpiar carpeta
+			os.remove(file_path)
 			transcription_id = transcribe_podcast(content_url, **kwargs)
 			podcast_metadata[download] = transcription_id
 
@@ -26,7 +25,7 @@ def create_transcripts(podcast_list, **kwargs):
 	return all_transcription_metadata
 
 def upload_to_assembly_ai(file_path):
-	headers = {'authorization': os.getenv('ASSEMBLY_AI_KEY')}
+	headers = {'authorization': st.secrets['ASSEMBLY_AI_KEY']}
 	endpoint = 'https://api.assemblyai.com/v2/upload'
 	response = requests.post(endpoint, headers=headers, data=read_file(file_path))
 	upload_url = response.json()['upload_url']
@@ -34,7 +33,7 @@ def upload_to_assembly_ai(file_path):
 
 def transcribe_podcast(url, **kwargs):
 	headers = {
-		"authorization": os.getenv('ASSEMBLY_AI_KEY'),
+		"authorization": st.secrets['ASSEMBLY_AI_KEY'],
 	    "content-type": "application/json",
 	}
 	
@@ -79,7 +78,7 @@ def save_transcriptions_locally(podcast_list):
 				json.dump(paragraphs, f)
 
 def get_assembly_ai_transcript(transcription_id):
-	headers = {'authorization': os.environ['ASSEMBLY_AI_KEY']}
+	headers = {'authorization': st.secrets['ASSEMBLY_AI_KEY']}
 	endpoint = f'https://api.assemblyai.com/v2/transcript/{transcription_id}/paragraphs'
 	response = requests.get(endpoint, headers=headers)
 	return response
@@ -109,11 +108,11 @@ def wait_and_get_assembly_ai_transcript(transcription_id):
 
 
 if __name__ == '__main__':
-	print("\n--- Transcribing podcasts... ---\n")
+	print("\n--- Transcribing episodes... ---\n")
 
 	# Obtener el podcast_list
-	base_dir = './podcast_downloader'
-	podcast_list_dir = f'{base_dir}/podcast_list.json'
+	base_dir = helpers.get_base_dir()
+	podcast_list_dir = f'{base_dir}/downloaded_list.json'
 	
 	raw_podcast_list = load_json(podcast_list_dir)['podcast_list']
 	podcast_list = get_podcast_list(raw_podcast_list)

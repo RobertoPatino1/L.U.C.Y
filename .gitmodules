@@ -1,0 +1,3 @@
+[submodule "Podcast-Downloader"]
+	path = Podcast-Downloader
+	url = https://github.com/vicbguti-espol/Podcast-Downloader

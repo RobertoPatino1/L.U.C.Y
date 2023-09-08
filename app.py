@@ -5,7 +5,8 @@ import json
 import pandas as pd
 import os
 from PIL import Image
-from podcast_downloader import podcast
+from podcast_downloader.podcast import Podcast
+import dateutil.parser
 
 def search(message_embedding, paragraph_emb_df, q_results = 5):
     paragraph_emb_df['similarity'] = paragraph_emb_df['embedding'].apply(lambda x: cosine_similarity(x, message_embedding))
@@ -23,109 +24,6 @@ def load_json(EPISODE_PATH):
     with open(EPISODE_PATH, 'r') as f:
         dictionary = json.load(f) 
     return dictionary
-
-# def get_embeddings(limit=10):
-#     transcripts_dir = './Podcast-Downloader/transcripts/'
-#     PARAGRAPH_EMBEDDING_DIR = './paragraphs_embeddings/'
-#     PARAGRAPH_EMBEDDING_PATH = f'{PARAGRAPH_EMBEDDING_DIR}/paragraphs_embeddings.json'
-#     paragraph_embedding = {'paragraph':[], 'embedding':[]}
-
-#     paragraph_emb_df = None
-
-#     # Crear el directorio de embeddings en caso de no existir
-#     if not os.path.exists(PARAGRAPH_EMBEDDING_DIR):
-#         os.mkdir(PARAGRAPH_EMBEDDING_DIR)
-
-#     # Crear archivo de embedding
-#     if not os.path.exists(PARAGRAPH_EMBEDDING_PATH):
-#         # Obtener las carpetas de podcasts
-#         podcasts = os.listdir(transcripts_dir)
-#         # Recorrer las carpetas
-#         for podcast in podcasts:
-#             # Obtener el directorio del podcast
-#             podcast_dir = f'{transcripts_dir}/{podcast}'
-#             # Comprobar que el directorio se trate de una carpeta
-#             if os.path.isdir(podcast_dir):
-#                 # Obtener los directorios del directorio del podcast
-#                 paragraphs_dirs = os.listdir(podcast_dir)
-#                 # Recorrer el directorio que contiene archivos json con párrafos
-#                 for paragraph in paragraphs_dirs:
-#                     paragraph_dir = f'{podcast_dir}/{paragraph}'
-#                     # Obtener el diccionario con párrafos
-#                     paragraphs_dict = load_json(paragraph_dir)
-                    
-#                     for paragraph_dict in paragraphs_dict['paragraphs'][:limit]:
-#                         paragraph = paragraph_dict['text']
-#                         if len(paragraph) > 200:
-#                             embedding = get_embedding(paragraph)
-
-#                             paragraph_embedding['paragraph'].append(paragraph)
-#                             paragraph_embedding['embedding'].append(embedding)
-
-#         # Obtener dataframe de paragraph y embedding
-#         paragraph_emb_df = pd.DataFrame(paragraph_embedding) 
-#         # Guardar dataframe        
-#         paragraph_emb_df.to_pickle(PARAGRAPH_EMBEDDING_PATH)
-#     else:
-#         # Leer dataframe
-#         paragraph_emb_df = pd.read_pickle(PARAGRAPH_EMBEDDING_PATH)
-    
-#     return paragraph_emb_df
-
-def get_embeddings(limit=10):
-    transcripts_dir = './Podcast-Downloader/transcripts/'
-    PARAGRAPH_EMBEDDING_DIR = './paragraphs_embeddings/'
-    PARAGRAPH_EMBEDDING_PATH = f'{PARAGRAPH_EMBEDDING_DIR}/paragraphs_embeddings.json'
-    paragraph_embedding = {'paragraph':[], 'embedding':[]}
-
-    paragraph_emb_df = None
-
-    # Crear el directorio de embeddings en caso de no existir
-    if not os.path.exists(PARAGRAPH_EMBEDDING_DIR):
-        os.mkdir(PARAGRAPH_EMBEDDING_DIR)
-
-    # Crear archivo de embedding
-    # if not os.path.exists(PARAGRAPH_EMBEDDING_PATH):
-        # Obtener las carpetas de podcasts
-        podcasts = os.listdir(transcripts_dir)
-        # Recorrer las carpetas
-        for podcast in podcasts:
-            podcast_paragraphs_embeddings_dir = f'{PARAGRAPH_EMBEDDING_DIR}/{podcast}'
-            if not os.path.exists(podcast_paragraphs_embeddings_dir):
-                os.mkdir(podcast_paragraphs_embeddings_dir)
-
-            # Obtener el directorio del podcast en Podcast-Downloader
-            podcast_dir = f'{transcripts_dir}/{podcast}'
-            # Comprobar que el directorio se trate de una carpeta
-            if os.path.isdir(podcast_dir):
-                # Obtener los directorios del directorio del podcast
-                paragraphs_dirs = os.listdir(podcast_dir)
-                # Recorrer el directorio que contiene archivos json con párrafos
-                for paragraph in paragraphs_dirs:
-                    paragraph_dir = f'{podcast_dir}/{paragraph}'
-                    # Obtener el diccionario con párrafos
-                    paragraphs_dict = load_json(paragraph_dir)
-                    
-                    i = 0 
-                    for paragraph_dict in paragraphs_dict['paragraphs']:
-                        paragraph = paragraph_dict['text']
-                        if len(paragraph) > 200 and i < limit:
-                            embedding = get_embedding(paragraph)
-
-                            paragraph_embedding['paragraph'].append(paragraph)
-                            paragraph_embedding['embedding'].append(embedding)
-                            i += 1
-
-        # Obtener dataframe de paragraph y embedding
-        paragraph_emb_df = pd.DataFrame(paragraph_embedding) 
-        # Guardar dataframe        
-        paragraph_emb_df.to_pickle(PARAGRAPH_EMBEDDING_PATH)
-    else:
-        # Leer dataframe
-        paragraph_emb_df = pd.read_pickle(PARAGRAPH_EMBEDDING_PATH)
-    
-    return paragraph_emb_df
-
 
 def save_podcast_data(podcast_list):
     l_podcast_json = {'podcast_list':podcast_list}
@@ -171,11 +69,40 @@ def select_settings(podcast_list):
     #                                 max_value=1.0, value=0.0, step=0.01)
     # return ChatOpenAI(temperature=temperature, model_name=model_name)
 
+def get_podcast_list(raw_podcast_list):
+    podcast_list = []
+
+    for raw_podcast in raw_podcast_list:
+        podcast_list += [Podcast(raw_podcast['name'], raw_podcast['rss_feed_url'])]
+    
+    return podcast_list
+
+def get_episodes_metadata(podcast_items):
+    episode_urls = [podcast.find('enclosure')['url'] for podcast in podcast_items]
+    episode_titles = [podcast.find('title').text for podcast in podcast_items]
+    episode_release_dates = [parse_date(podcast.find('pubDate').text) for podcast in podcast_items]
+    episode_descriptions = [podcast.find('description').text for podcast in podcast_items]
+    return list(zip(episode_urls, episode_titles, episode_release_dates, episode_descriptions))
 
 
-def starting_chat():
-    initial_podcast_list = load_json('./Podcast-Downloader/podcast_list.json')['podcast_list']
-    # First message
+def main():
+    # Iniciar chat y obtener el arreglo de podcast disponibles en formato json
+    # Set page config
+    st.set_page_config(
+        page_title="Chatty", page_icon="🎯")
+    
+    # Empezar el chat inicial informativo del bot 
+    podcast_downloader_dir = './podcast_downloader'
+    podcast_list_path = f'{podcast_downloader_dir}/podcast_list.json'
+
+    # Obtener los podcast disponibles
+    raw_podcast_list = load_json(podcast_list_path)['podcast_list']
+
+    # Inicializar podcast_list en streamlit session
+    if not 'podcast_list' in st.session_state:
+        st.session_state['podcast_list'] = raw_podcast_list
+        
+    # Mostrar mensaje inicial informativo en el chat 
     initial_message = """
     Hola! Soy Lucy, tu coach personal, mis respuestas se basan en tus podcasts favoritos,
     actualmente conozco de los siguientes podcast:\n
@@ -183,18 +110,9 @@ def starting_chat():
     Vamos cuéntame, de qué quieres hablar conmigo hoy 😊
     """
     coach = st.chat_message("assistant", avatar='👩')
-    coach.write(initial_message.format(podcasts="\n".join([d['name'] for d in initial_podcast_list])))
-  
-
-def main():
-    # Set page config
-    st.set_page_config(
-        page_title="Chatty", page_icon="🎯")
+    coach.write(initial_message.format(podcasts="\n".join([d['name'] for d in raw_podcast_list])))
     
-    # Empezar el chat inicial informativo del bot 
-    starting_chat()
-
-
+    
     # Set OpenAI API key from Streamlit secrets
     openai.api_key = st.secrets["OPENAI_API_KEY"]
     openai.api_base = st.secrets["API_BASE"]
@@ -238,6 +156,34 @@ def main():
         else:
             # Asimilar spotify search al empezar el chat
             message_embedding = get_embedding(prompt)
+            
+
+
+
+
+
+            # Obtener arreglo con objetos tipo podcast
+            podcast_list = [Podcast(raw_podcast['name'], raw_podcast['rss_feed_url']) for raw_podcast in raw_podcast_list]
+
+            for podcast in podcast_list:
+                # Obtengo la metadata de top_limit = 2 episodios con mayor similitud
+                podcast_items = podcast.search_items(message_embedding, top_limit = 2)
+                episodes_metadata = get_episodes_metadata(podcast_items)
+                
+                for episode in episodes_metadata:
+                    url, title, release_date, description = episode
+
+                    
+
+
+
+
+
+
+
+
+
+
             paragraph_emb_df = get_embeddings(message_embedding)
             similarities = search(message_embedding, paragraph_emb_df)
             

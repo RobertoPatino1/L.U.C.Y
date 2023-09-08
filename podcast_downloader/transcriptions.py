@@ -56,7 +56,7 @@ def read_file(filename, chunk_size=5242880):
                 break
             yield data
 
-def save_transcription_metadata(metadata, file_path='./Podcast-Downloader/transcripts/metadata.json'):
+def save_transcription_metadata(metadata, file_path='./podcast_downloader/transcripts/metadata.json'):
 	with open(file_path,'w') as f:
 		json.dump(metadata, f)
 
@@ -67,7 +67,7 @@ def load_json(file_path):
 
 def save_transcriptions_locally(podcast_list):
 	# Load transcription metadata
-	metadata = load_json('./Podcast-Downloader/transcripts/metadata.json')
+	metadata = load_json('./podcast_downloader/transcripts/metadata.json')
 	for podcast in podcast_list:
 		podcast_transcriptions = metadata[podcast.name]
 		for episode, transcription_id in podcast_transcriptions.items():
@@ -112,7 +112,7 @@ if __name__ == '__main__':
 	print("\n--- Transcribing podcasts... ---\n")
 
 	# Obtener el podcast_list
-	base_dir = './Podcast-Downloader'
+	base_dir = './podcast_downloader'
 	podcast_list_dir = f'{base_dir}/podcast_list.json'
 	
 	raw_podcast_list = load_json(podcast_list_dir)['podcast_list']

@@ -8,6 +8,8 @@ from dotenv import load_dotenv, find_dotenv
 import time
 import json
 import unicodedata
+import helpers
+from helpers import slugify
 
 load_dotenv(find_dotenv())
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -15,20 +17,21 @@ openai.api_base = os.getenv("API_BASE")
 
 class Podcast:
     def __init__(self, name, rss_feed_url):
+        # Definir atributos de clase
         self.name = name
         self.rss_feed_url = rss_feed_url
         
-        
-        self.download_directory = f'./Podcast-Downloader/downloads/{self.slugify(name)}'
-        if not os.path.exists(self.download_directory):
-            os.makedirs(self.download_directory)
-
-        self.transcription_directory = f'./Podcast-Downloader/transcripts/{self.slugify(name)}'
-        if not os.path.exists(self.transcription_directory):
-            os.makedirs(self.transcription_directory)   
-
-        self.description_embeddings_path = f'./Podcast-Downloader/description_embeddings/{self.slugify(name)}.json'
-           
+        # Definir directorios de clase
+        base_path = helpers.get_base_dir()
+        self.download_directory = f'{base_path}/downloads/{slugify(name)}'
+        self.transcription_directory = f'{base_path}/transcripts/{slugify(name)}'
+        self.paragraph_embeddings_directory = f'{base_path}/paragraph_embeddings/{slugify(name)}'
+        self.description_embeddings_path = f'{base_path}/description_embeddings/{slugify(name)}.json'
+    
+        # Crear directorios de clase
+        for dir in [self.download_directory, self.transcription_directory, self.paragraph_embeddings_directory]:
+            if not os.path.exists(dir):
+                os.makedirs(dir)
 
     def get_items(self):
         page = requests.get(self.rss_feed_url)
@@ -46,21 +49,6 @@ class Podcast:
         file_name = re.sub(r'[%/&!@#\*\$\?\+\^\\.\\\\]', '', self.name)[:100].replace(' ', '_')
         return file_name
     
-    def slugify(self, value, allow_unicode=False):
-        """
-        Taken from https://github.com/django/django/blob/master/django/utils/text.py
-        Convert to ASCII if 'allow_unicode' is False. Convert spaces or repeated
-        dashes to single dashes. Remove characters that aren't alphanumerics,
-        underscores, or hyphens. Convert to lowercase. Also strip leading and
-        trailing whitespace, dashes, and underscores.
-        """
-        value = str(value)
-        if allow_unicode:
-            value = unicodedata.normalize('NFKC', value)
-        else:
-            value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
-        value = re.sub(r'[^\w\s-]', '', value.lower())
-        return re.sub(r'[-\s]+', '-', value).strip('-_')
 
     def save_description_embeddings(self, description_embeddings):
         description_embeddings_json = {'description_embeddings':description_embeddings}
@@ -98,7 +86,8 @@ class Podcast:
         description_embeddings = None
 
         # Declarar el archivo de embeddings de las descripciones de los episodios
-        description_embeddings_dir = f'./Podcast-Downloader/description_embeddings'
+        base_path = './podcast_downloader'
+        description_embeddings_dir = f'{base_path}/description_embeddings'
         if not os.path.exists(description_embeddings_dir):
             os.mkdir(description_embeddings_dir)  
         

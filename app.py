@@ -186,5 +186,25 @@ def main():
         message_placeholder.markdown(full_response)
         st.session_state.messages.append({"role": "assistant", "content": full_response})
 
+def test():
+    # message_embedding = get_embedding('Hola, últimamente me he sentido muy bien, crees que me pueda mantener así?')
+    # with open('message_embedding.json', 'w') as f:
+    #     json.dump({'message_embedding':message_embedding}, f)
+
+    # Empezar el chat inicial informativo del bot 
+    podcast_downloader_dir = hp.get_base_dir()
+    podcast_list_path = f'{podcast_downloader_dir}/podcast_list.json'
+
+    # Obtener los podcast disponibles
+    with open(podcast_list_path, 'r') as f:
+        raw_podcast_list = json.load(f)['podcast_list']
+
+
+    with open('message_embedding.json') as f:
+        message_embedding = json.load(f)['message_embedding']
+    matched_paragraphs = get_matched_paragraphs(raw_podcast_list, message_embedding)
+    print(matched_paragraphs)
+
 if __name__ == '__main__':
-    main()
+    # main()
+    test()

@@ -17,7 +17,7 @@ if __name__ == '__main__':
     print("\n--- Downloading episodes... ---\n")
     # Obtener metadata del episodio
     base_dir = helpers.get_base_dir()
-    with open(base_dir, 'r') as f:
+    with open(f'{base_dir}/podcast_metadata.json', 'r') as f:
         episode = json.load(f)
         
     url = episode['url']
@@ -26,8 +26,6 @@ if __name__ == '__main__':
     file = get_mp3_file(url)
     # Guardar el archivo de audio
     save_mp3_file(file, file_path)
-    # Limpiar carpeta
-    os.remove(file_path)
     print(file_path, "saved")
 
             

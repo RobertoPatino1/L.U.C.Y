@@ -3,9 +3,9 @@ import os
 from bs4 import BeautifulSoup
 import time
 import json
-import helpers
 import re
-from helpers import slugify, cosine_similarity, get_embedding
+import podcast_downloader.helpers as helpers
+from podcast_downloader.helpers import slugify, cosine_similarity, get_embedding
 import subprocess
 
 class Podcast:
@@ -78,17 +78,17 @@ class Podcast:
         with open(self.description_embeddings_path, 'w') as f:
                 json.dump(description_embeddings_json, f)
 
-    def update_description_embeddings(self, items_limit=10):
+    def update_description_embeddings(self, items_limit=5):
         # Obtener el arreglo de description_embeddings
         description_embeddings = self.get_description_embeddings()
         # Obtener los episodios del podcast
         items = self.get_items()
         i = 0
-
+        j = 0
         while i < items_limit:
-            item = items[i]
+            item = items[j]
             title = item.find('title').text
-            if (len(description_embeddings) == 0 ^ title not in [d['title'] for d in description_embeddings]):
+            if ((len(description_embeddings) == 0) ^ (title not in [d['title'] for d in description_embeddings])):
                 # Dormir el lazo 8 segundos por cada 10 embeddings
                 if ((i+1) % 10 == 0):
                     time.sleep(8)
@@ -105,7 +105,7 @@ class Podcast:
                 i += 1
             elif (len(description_embeddings) == len(items)):
                 i = items_limit
-            
+            j += 1            
         # Actualizar description_embeddings
         self.save_description_embeddings(description_embeddings)
     
@@ -125,7 +125,7 @@ class Podcast:
         with open(f'{self.paragraph_embeddings_directory}/{episode_path}', 'w') as f:
             json.dump(paragraph_embeddings_json, f)
 
-    def update_paragraph_embeddings(self, episode_path, url, paragraphs_limit = 10):
+    def update_paragraph_embeddings(self, episode_path, url, paragraphs_limit = 5):
         transcripts_paths = os.listdir(self.transcription_directory)
         paragraph_embeddings = self.get_paragraph_embeddings(episode_path)
         
@@ -134,24 +134,31 @@ class Podcast:
             download_episode_path = f'{self.download_directory}/{re.sub(r"[.]json$", ".mp3",episode_path)}'
 
             episode_metadata_json = {'url': url, 'download_episode_path': download_episode_path}
-            with open(f'{base_dir}/podcast_metadata', 'w') as f:
+            with open(f'{base_dir}/podcast_metadata.json', 'w') as f:
                 json.dump(episode_metadata_json, f)
             
-            subprocess.run(f'{base_dir}/run_all.sh')
+            # subprocess.run([f'{base_dir}/run_all.sh'])
+            subprocess.call(['python', f'{base_dir}/download_podcasts.py'])
+            subprocess.call(['python', f'{base_dir}/transcriptions.py'])
             
         with open(f'{self.transcription_directory}/{episode_path}', 'r') as f:
             paragraphs = [x['text'] for x in json.load(f)['paragraphs']]
 
         i = 0 
+        j = 0
         while i < paragraphs_limit:
             if ((i+1) % 10 == 0):
                 time.sleep(8)
             
-            if (len(paragraph_embeddings) > 0 ^ paragraphs[i] not in [x['paragraph'] for x in paragraph_embeddings]):
-                paragraph_embeddings += [{'paragraph': paragraphs[i] , 'embedding': get_embedding(paragraphs[i])}]
+            paragraph = paragraphs[j]
+            
+            if ((len(paragraph_embeddings) > 0) ^ (paragraph not in [x['paragraph'] for x in paragraph_embeddings])):
+                paragraph_embeddings += [{'paragraph': paragraph , 'embedding': get_embedding(paragraphs[i])}]
                 i += 1
             elif (len(paragraph_embeddings) == len(paragraphs)):
                 i = paragraphs_limit
+
+            j += 1
         self.save_paragraph_embeddings(paragraph_embeddings, episode_path)
         
             

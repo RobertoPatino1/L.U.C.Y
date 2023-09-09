@@ -88,7 +88,8 @@ class Podcast:
         while i < items_limit:
             item = items[j]
             title = item.find('title').text
-            if ((len(description_embeddings) == 0) ^ (title not in [d['title'] for d in description_embeddings])):
+
+            if ((len(description_embeddings) == 0) or ((title not in [d['title'] for d in description_embeddings]))):
                 # Dormir el lazo 8 segundos por cada 10 embeddings
                 if ((i+1) % 10 == 0):
                     time.sleep(8)
@@ -103,7 +104,7 @@ class Podcast:
                                             'description': description,
                                             'embedding': description_embedding}]
                 i += 1
-            elif (len(description_embeddings) == len(items)):
+            else:
                 i = items_limit
             j += 1            
         # Actualizar description_embeddings
@@ -119,6 +120,8 @@ class Podcast:
         else:
             with open(paragraph_embeddings_path, 'r') as f:
                 paragraph_embeddings = json.load(f)['paragraph_embeddings']
+        
+        return paragraph_embeddings
 
     def save_paragraph_embeddings(self, paragraph_embeddings, episode_path):
         paragraph_embeddings_json = {'paragraph_embeddings': paragraph_embeddings}
@@ -147,15 +150,12 @@ class Podcast:
         i = 0 
         j = 0
         while i < paragraphs_limit:
-            if ((i+1) % 10 == 0):
-                time.sleep(8)
-            
-            paragraph = paragraphs[j]
-            
-            if ((len(paragraph_embeddings) > 0) ^ (paragraph not in [x['paragraph'] for x in paragraph_embeddings])):
-                paragraph_embeddings += [{'paragraph': paragraph , 'embedding': get_embedding(paragraphs[i])}]
+            if ((len(paragraph_embeddings) == 0) or ((paragraphs[j] not in [x['paragraph'] for x in paragraph_embeddings]))):
+                if ((i+1) % 10 == 0):
+                    time.sleep(8)
+                paragraph_embeddings += [{'paragraph': paragraphs[j] , 'embedding': get_embedding(paragraphs[j])}]
                 i += 1
-            elif (len(paragraph_embeddings) == len(paragraphs)):
+            else:
                 i = paragraphs_limit
 
             j += 1

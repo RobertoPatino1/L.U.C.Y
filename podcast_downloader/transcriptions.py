@@ -2,9 +2,13 @@ import os
 import json
 import time
 import requests
-import helpers 
-from podcast import Podcast
 import streamlit as st
+import sys
+sys.path.append('./')
+
+import podcast_downloader.helpers as helpers
+from podcast_downloader.podcast import Podcast
+
 
 def create_transcripts(podcast_list, **kwargs):
 	all_transcription_metadata = {}
@@ -112,7 +116,7 @@ if __name__ == '__main__':
 
 	# Obtener el podcast_list
 	base_dir = helpers.get_base_dir()
-	podcast_list_dir = f'{base_dir}/downloaded_list.json'
+	podcast_list_dir = f'{base_dir}/podcast_list.json'
 	
 	raw_podcast_list = load_json(podcast_list_dir)['podcast_list']
 	podcast_list = get_podcast_list(raw_podcast_list)

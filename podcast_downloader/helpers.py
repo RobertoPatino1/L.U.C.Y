@@ -36,3 +36,8 @@ def get_embedding(text, model="text-embedding-ada-002"):
 # OS methods
 def get_base_dir():
     return './podcast_downloader'
+
+
+# Array methods
+def flatten(l):
+    return [item for sublist in l for item in sublist]

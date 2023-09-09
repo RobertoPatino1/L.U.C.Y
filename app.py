@@ -4,7 +4,7 @@ import json
 import os
 import podcast_downloader.helpers as hp
 from podcast_downloader.podcast import Podcast
-from podcast_downloader.helpers import slugify, cosine_similarity, get_embedding
+from podcast_downloader.helpers import slugify, cosine_similarity, get_embedding, flatten
 
 def save_podcast_data(podcast_list):
     l_podcast_json = {'podcast_list':podcast_list}
@@ -87,7 +87,7 @@ def get_matched_paragraphs(raw_podcast_list, message_embedding, TOP_LIMIT = 2):
                                                 key = lambda x: cosine_similarity(x['embedding'], message_embedding),
                                                 reverse=True)
 
-            matched_paragraphs += [x['paragraph'] for x in paragraph_embeddings_sorted[:TOP_LIMIT]]
+            matched_paragraphs += [{'title': title, 'paragraphs': [x['paragraph'] for x in paragraph_embeddings_sorted[:TOP_LIMIT]]}]
         
     return matched_paragraphs
 
@@ -141,6 +141,9 @@ def main():
     Ahora te muestro a continuación qué dicen las expertas acerca del tema, con lo cual puedas basar tu respuesta:
     {experts}
 
+    Además menciona que te basaste en los siguientes episodios:
+    {episodes}
+
     Por favor, escribe cómo le responderías a esta persona que ha acudido a ti como coach:
     """
 
@@ -164,14 +167,16 @@ def main():
         else:
             # Asimilar spotify search al empezar el chat
             message_embedding = get_embedding(prompt)
-            matched_paragraphs = get_matched_paragraphs(raw_podcast_list, message_embedding)
-            custom_prompt = template.format(message=prompt, experts="\n".join(matched_paragraphs))
+            matched_paragraphs_json = get_matched_paragraphs(raw_podcast_list, message_embedding)
+            matched_paragraphs = flatten([x['paragraphs'] for x in matched_paragraphs_json])
+            titles = set([x['title'] for x in matched_paragraphs_json])
+            custom_prompt = template.format(message=prompt, experts="\n".join(matched_paragraphs), episodes="\n".join(list(titles)))
             st.session_state.messages.append({"role": "user", "content": custom_prompt})
         # Display user message in chat message container
-        with st.chat_message("user", '🗿'):
+        with st.chat_message("user", avatar='🗿'):
             st.markdown(prompt)
         # Display assistant response in chat message container
-        with st.chat_message("assistant", '👩'):
+        with st.chat_message("assistant", avatar='👩'):
             message_placeholder = st.empty()
             full_response = ""
 
@@ -206,5 +211,5 @@ def test():
     print(matched_paragraphs)
 
 if __name__ == '__main__':
-    # main()
-    test()
+    main()
+    # test()

@@ -75,7 +75,7 @@ def save_transcriptions_locally(podcast_list):
 		podcast_transcriptions = metadata[podcast.name]
 		for episode, transcription_id in podcast_transcriptions.items():
 			episode_name = os.path.splitext(episode)[0]
-			output_path = f'{podcast.transcription_directory}/{episode_name}.json'
+			output_path = f'{podcast.transcription_directory}/{episode_name}.txt'
 			print('Trying to save', output_path)
 			paragraphs = wait_and_get_assembly_ai_transcript(transcription_id)
 			with open(output_path, 'w') as f:
@@ -83,7 +83,7 @@ def save_transcriptions_locally(podcast_list):
 
 def get_assembly_ai_transcript(transcription_id):
 	headers = {'authorization': st.secrets['ASSEMBLY_AI_KEY']}
-	endpoint = f'https://api.assemblyai.com/v2/transcript/{transcription_id}/paragraphs'
+	endpoint = f'https://api.assemblyai.com/v2/transcript/{transcription_id}'
 	response = requests.get(endpoint, headers=headers)
 	return response
 
@@ -115,7 +115,7 @@ if __name__ == '__main__':
 	print("\n--- Transcribing episodes... ---\n")
 
 	# Obtener el podcast_list
-	base_dir = helpers.get_base_dir()
+	base_dir = helpers.get_root_dir()
 	podcast_list_dir = f'{base_dir}/podcast_list.json'
 	
 	raw_podcast_list = load_json(podcast_list_dir)['podcast_list']

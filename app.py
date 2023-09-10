@@ -1,53 +1,15 @@
 import streamlit as st
 import openai
 import json
-import os
 import podcast_downloader.helpers as hp
 from podcast_downloader.podcast import Podcast
 from podcast_downloader.helpers import slugify, cosine_similarity, get_embedding, flatten
 
 def save_podcast_data(podcast_list):
     l_podcast_json = {'podcast_list':podcast_list}
-    json_path = './Podcast-Downloader/podcast_list.json'
+    json_path = './podcast_downloader/podcast_list.json'
     with open(json_path, 'w') as f:
         json.dump(l_podcast_json, f)
-
-def select_settings(podcast_list):
-    # Session State initializing
-    if 'store' not in st.session_state:
-        st.session_state.store = False 
-
-    if st.sidebar.button('Agrega tu Google Podcast favorito') or st.session_state.store:
-        st.session_state.store = True
-        with st.empty():
-            st.sidebar.write('El RSS Feed URL puedes obtenerlo en: https://getrssfeed.com/')
-            # image = Image.open('./step_by_step_rss_feed.gif')
-            # st.sidebar.image(image, caption='¿Cómo obtener el rss feed url?')
-            # q = st.sidebar.number_input('Cantidad', min_value=1, max_value=2)
-            # if st.sidebar.button(f'Ingresar podcast'):
-                # for i in range(q):
-            name = st.sidebar.text_input(f'Nombre del podcast')
-            rss_feed_url = st.sidebar.text_input('RSS Feed URL del podcast')
-
-            if st.sidebar.button('Guardar podcast'):        
-                if rss_feed_url not in [podcast['rss_feed_url'] for podcast in podcast_list]:
-                    podcast_list += [{'name':name, 'rss_feed_url':rss_feed_url}]
-                    save_podcast_data(podcast_list)
-                elif name != '' and rss_feed_url != '':
-                    st.sidebar.write('Escribir los datos del podcast')
-                else:
-                    st.sidebar.write('Podcast actualmente en existencia')
-            
-            st.empty()
-
-    podcast_options = st.sidebar.multiselect('Escoge algunos de los podcast que conozco', [podcast['name'] for podcast in podcast_list])
-    
-    
-    # model_name = st.sidebar.radio("Choose LLM:",
-    #                               ("gpt-3.5-turbo-0613", "gpt-4"))
-    # temperature = st.sidebar.slider("Temperature:", min_value=0.0,
-    #                                 max_value=1.0, value=0.0, step=0.01)
-    # return ChatOpenAI(temperature=temperature, model_name=model_name)
 
 def get_podcast_list(raw_podcast_list):
     podcast_list = []
@@ -62,7 +24,7 @@ def get_episodes_metadata(podcast_items):
     episode_titles = [podcast.find('title').text for podcast in podcast_items]
     return list(zip(episode_urls, episode_titles))
 
-def get_matched_paragraphs(raw_podcast_list, message_embedding, TOP_LIMIT = 2):
+def get_matched_paragraphs(message, raw_podcast_list, **kwargs):
     
     matched_paragraphs = []
     # Obtener arreglo con objetos tipo podcast
@@ -72,7 +34,7 @@ def get_matched_paragraphs(raw_podcast_list, message_embedding, TOP_LIMIT = 2):
         # Actualizar description_embeddings del podcast
         podcast.update_description_embeddings()
         # Obtengo la metadata de top_limit = 2 episodios con mayor similitud
-        podcast_items = podcast.search_items(message_embedding, TOP_LIMIT = 2)
+        podcast_items = podcast.search_items(message, **kwargs)
         episodes_metadata = get_episodes_metadata(podcast_items)
         
         for episode in episodes_metadata:
@@ -99,7 +61,7 @@ def main():
         page_title="Chatty", page_icon="🎯")
     
     # Empezar el chat inicial informativo del bot 
-    podcast_downloader_dir = hp.get_base_dir()
+    podcast_downloader_dir = hp.get_root_dir()
     podcast_list_path = f'{podcast_downloader_dir}/podcast_list.json'
 
     # Obtener los podcast disponibles
@@ -117,8 +79,9 @@ def main():
     {podcasts}\n
     Vamos cuéntame, de qué quieres hablar conmigo hoy 😊
     """
-    coach = st.chat_message("assistant", avatar='👩')
-    coach.write(initial_message.format(podcasts="\n".join([d['name'] for d in raw_podcast_list])))
+
+    with st.chat_message("assistant", avatar='👩'):
+        st.markdown(initial_message.format(podcasts="\n".join([d['name'] for d in raw_podcast_list])))
     
     
     # Set OpenAI API key from Streamlit secrets
@@ -166,8 +129,7 @@ def main():
             st.session_state.messages.append({"role": "user", "content": prompt})
         else:
             # Asimilar spotify search al empezar el chat
-            message_embedding = get_embedding(prompt)
-            matched_paragraphs_json = get_matched_paragraphs(raw_podcast_list, message_embedding)
+            matched_paragraphs_json = get_matched_paragraphs(message, raw_podcast_list, k=2)
             matched_paragraphs = flatten([x['paragraphs'] for x in matched_paragraphs_json])
             titles = set([x['title'] for x in matched_paragraphs_json])
             custom_prompt = template.format(message=prompt, experts="\n".join(matched_paragraphs), episodes="\n".join(list(titles)))
@@ -197,7 +159,7 @@ def test():
     #     json.dump({'message_embedding':message_embedding}, f)
 
     # Empezar el chat inicial informativo del bot 
-    podcast_downloader_dir = hp.get_base_dir()
+    podcast_downloader_dir = hp.get_root_dir()
     podcast_list_path = f'{podcast_downloader_dir}/podcast_list.json'
 
     # Obtener los podcast disponibles
@@ -210,6 +172,17 @@ def test():
     matched_paragraphs = get_matched_paragraphs(raw_podcast_list, message_embedding)
     print(matched_paragraphs)
 
+def test1():
+    podcast = Podcast('Psicologia Al Desnudo | @psi.mammoliti', 'https://anchor.fm/s/28fef6f0/podcast/rss')
+    db_instructEmbedd = hp.load_embeddings(f'{slugify(podcast.name)}')
+    retriever = db_instructEmbedd.as_retriever(search_kwargs={"k": 3})
+    docs = retriever.get_relevant_documents("Hola, últimamente me he sentido muy bien, crees que me pueda mantener así?")
+    print(docs[0].page_content)
+
+
 if __name__ == '__main__':
-    main()
+    # main()
     # test()
+    # test1()
+    # test2()
+    # test3()

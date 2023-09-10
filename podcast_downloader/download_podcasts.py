@@ -16,7 +16,7 @@ def save_mp3_file(file, file_path):
 if __name__ == '__main__':
     print("\n--- Downloading episodes... ---\n")
     # Obtener metadata del episodio
-    base_dir = helpers.get_base_dir()
+    base_dir = helpers.get_root_dir()
     with open(f'{base_dir}/podcast_metadata.json', 'r') as f:
         episode = json.load(f)
         

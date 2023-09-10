@@ -19,8 +19,6 @@ if __name__ == '__main__':
     base_dir = helpers.get_root_dir()
     with open(f'{base_dir}/podcast_metadata.json', 'r') as f:
         episode = json.load(f)
-    
-    os.remove(f'{base_dir}/podcast_metadata.json')
         
     url = episode['url']
     file_path = episode['download_episode_path']

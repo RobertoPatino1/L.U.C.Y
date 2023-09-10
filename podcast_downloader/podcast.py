@@ -77,6 +77,7 @@ class Podcast:
                 # Agregar description embedding 
                 description = self.get_cleaned_description(item)
                 db_description_embeddings.add_texts([description])
+                self.add_episode_records(title)
                 i += 1
             elif len(titles) == len(items):
                 i = items_limit
@@ -114,7 +115,7 @@ class Podcast:
 
     def generate_transcript(self, episode_path, url):
         base_dir = helpers.get_root_dir()
-        download_episode_path = f'{self.download_directory}/{episode_path}.mp3)'
+        download_episode_path = f'{self.download_directory}/{episode_path}.mp3'
 
         episode_metadata_json = {'url': url, 'download_episode_path': download_episode_path}
         with open(f'{base_dir}/podcast_metadata.json', 'w') as f:

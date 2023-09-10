@@ -19,8 +19,6 @@ def create_transcripts(podcast_list, **kwargs):
 			print("Uploading", download)
 			file_path = f'{podcast.download_directory}/{download}'
 			content_url = upload_to_assembly_ai(file_path)
-			# Limpiar carpeta
-			os.remove(file_path)
 			transcription_id = transcribe_podcast(content_url, **kwargs)
 			podcast_metadata[download] = transcription_id
 
@@ -84,6 +82,7 @@ def save_transcriptions_locally(podcast_list):
 def get_assembly_ai_transcript(transcription_id):
 	headers = {'authorization': st.secrets['ASSEMBLY_AI_KEY']}
 	endpoint = f'https://api.assemblyai.com/v2/transcript/{transcription_id}'
+
 	response = requests.get(endpoint, headers=headers)
 	return response
 
@@ -97,18 +96,20 @@ def get_podcast_list(raw_podcast_list):
 
 def wait_and_get_assembly_ai_transcript(transcription_id):
 	while True:
-		response = get_assembly_ai_transcript(transcription_id)
-		if response['status'] == 'completed':
+		transcription_result = get_assembly_ai_transcript(transcription_id).json()
+
+		if transcription_result['status'] == 'completed':
 			print("Got transcript")
 			break
-		elif response['status'] == 'error':
-			print("Error getting transcript")
-			break
-		else:
-			print("Transcript not available, trying again in 10 seconds...")
-			time.sleep(10) # Try again in 10 seconds
 
-	return response
+		elif transcription_result['status'] == 'error':
+			raise RuntimeError(f"Transcription failed: {transcription_result['error']}")
+
+		else:
+			print('Transcript not available, trying again in 10 seconds...')
+			time.sleep(10)
+
+	return transcription_result
 
 
 if __name__ == '__main__':

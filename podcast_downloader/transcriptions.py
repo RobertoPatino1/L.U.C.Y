@@ -4,8 +4,8 @@ import time
 import requests
 import streamlit as st
 import sys
-sys.path.append('./')
 
+sys.path.append('./')
 import podcast_downloader.helpers as helpers
 from podcast_downloader.podcast import Podcast
 

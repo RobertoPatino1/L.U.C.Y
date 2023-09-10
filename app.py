@@ -1,10 +1,9 @@
 import streamlit as st
-import openai
 import json
 import pickle
 import podcast_downloader.helpers as hp
 from podcast_downloader.podcast import Podcast
-from podcast_downloader.helpers import slugify, load_embeddings, update_embeddings
+from podcast_downloader.helpers import slugify, load_embeddings
 
 def save_podcast_data(podcast_list):
     l_podcast_json = {'podcast_list':podcast_list}
@@ -83,10 +82,6 @@ def main():
     with st.chat_message("assistant", avatar='👩'):
         st.markdown(initial_message.format(podcasts="\n".join([d['name'] for d in raw_podcast_list])))
     
-    
-    # Set OpenAI API key from Streamlit secrets
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
-    openai.api_base = st.secrets["API_BASE"]
 
     # Definir la orden predeterminada para el LLM
     template = """
@@ -190,7 +185,7 @@ def avance(message, file_name,  **kwargs):
     # Obtener 3 párrafos coincidentes por podcast
     matched = get_matched_paragraphs(message, raw_podcast_list, **kwargs)
     matched_paragraphs = hp.flatten([x['matched_paragraphs'] for x in matched])
-    with open(file_name, 'w') as f:
+    with open(f'{file_name}.json', 'w') as f:
         json.dump({message: matched}, f)
           
     print(len(matched_paragraphs))
@@ -234,5 +229,5 @@ if __name__ == '__main__':
         ]
     }
     '''
-    print(matched['message'][0]['matched_paragraphs'])
+    print(matched[f'{mensaje}'][0]['matched_paragraphs'])
     # test3()

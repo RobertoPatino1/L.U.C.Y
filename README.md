@@ -1,5 +1,9 @@
 # Proyecto_PreTAWS_G4
 
+# Instalar requirements
+
+`pip install -r requirements.txt`
+
 # En app.py
 
 **1. Ingresar el mensaje en `mensaje`**

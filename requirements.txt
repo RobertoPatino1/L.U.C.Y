@@ -1,0 +1,12 @@
+beautifulsoup4
+langchain
+requests
+streamlit
+pickle
+json
+os
+unicodedata
+re
+subprocess
+sys
+time

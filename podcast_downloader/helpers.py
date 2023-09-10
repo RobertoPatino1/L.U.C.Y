@@ -1,8 +1,5 @@
 import re
 import unicodedata
-import numpy as np
-import openai
-import streamlit as st
 import pickle
 import os
 import json
@@ -10,11 +7,6 @@ from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
 import sys
 sys.path.append('./')
-
-
-# Set OpenAI API key from Streamlit secrets
-openai.api_key = st.secrets["OPENAI_API_KEY"]
-openai.api_base = st.secrets["API_BASE"]
 
 # Parse methods
 def slugify(value, allow_unicode=False):
@@ -160,6 +152,6 @@ def test3():
     # docs = retriever.get_relevant_documents("hola mundo")
     # print([doc.page_content for doc in docs])
 
-if __name__ == '__main__':
-    # test2()
-    test3()
+# if __name__ == '__main__':
+#     # test2()
+#     test3()

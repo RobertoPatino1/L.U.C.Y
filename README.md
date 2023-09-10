@@ -52,7 +52,7 @@ Ejecutar en el terminal al archivo app.py
 
 **3. Leer el archivo json generado**
 Este archivo contiene los párrafos que tienen similitud con el mensaje propuesto en `mensaje`.
-Este archivo tiene la siguiente estructura
+Este archivo tiene la siguiente estructura con k-párrafos.
 ```javascript
 {'mensaje':
         [
@@ -61,8 +61,8 @@ Este archivo tiene la siguiente estructura
                 'title':'titulo_del_episodio_del_podcast',
                 'matched_paragraphs':['texto_primer_parrafo', 
                                         'texto_segundo_parrafo',
-                                          ...,
-                                            'texto_k-ésimo párrafo']
+                                          ...
+                                    ]
             },
             {...},
             ...,

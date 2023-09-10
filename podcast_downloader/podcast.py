@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 import podcast_downloader.helpers as helpers
-from podcast_downloader.helpers import slugify, store_embeddings, load_embeddings
+from podcast_downloader.helpers import slugify, create_embeddings, load_embeddings
 import os
 import json
 import subprocess
@@ -53,63 +53,29 @@ class Podcast:
         '''
         # Obtener episodios del podcast
         items = self.get_items()
-        # if f'faiss_{slugify(self.name)}.pkl' not in os.listdir(helpers.get_desc_emb_dir()):
-        #     # Empezar db con el primer episodio más reciente
-        #     items10 = items[:10]
-        #     episode_titles = [item.find('title').text for item in items10]
-        #     store_embeddings([self.get_cleaned_description(item) for item in items10], f'{slugify(self.name)}', path = helpers.get_desc_emb_dir())
-        #     for episode_title in episode_titles:
-        #         self.add_episode_records(episode_title)
-        #     print('weirdly db initialize')
 
         if f'faiss_{slugify(self.name)}.pkl' not in os.listdir(helpers.get_desc_emb_dir()):
             item = items[0]
-            store_embeddings([self.get_cleaned_description(item)], f'{slugify(self.name)}', path=helpers.get_desc_emb_dir()) 
-            episode_title = item.find('title').text
-            self.add_episode_records(episode_title)
-            print('db_initialization')
+            create_embeddings([self.get_cleaned_description(item)], f'{slugify(self.name)}', path=helpers.get_desc_emb_dir())
         
-        # # Obtener los embeddings del podcast respecto a sus descripciones
-        # db_description_embeddings = load_embeddings(slugify(self.name), path=helpers.get_desc_emb_dir())
+        # Obtener los embeddings del podcast respecto a sus descripciones
+        db_description_embeddings_metadata = load_embeddings(slugify(self.name), path=helpers.get_desc_emb_dir())
+        db_description_embeddings = db_description_embeddings_metadata['faiss_index']
+        db_descriptions = db_description_embeddings_metadata['texts']   
 
-        # # Obtener episode records del podcast
-        # records = self.get_episode_records()
-        # episode_records = [x for x in records if x['podcast'] == self.name] 
-    
-        # # Obtener los títulos de episode_records
-        # titles = [x['title'] for x in episode_records]
-
-        # i = 0 
-        # j = 0 
-        # while i < items_limit: 
-        #     item = items[j]
-        #     title = item.find('title').text
-        #     if (len(titles) == 0) or (title not in titles):
-        #         # Agregar description embedding 
-        #         description = self.get_cleaned_description(item)
-        #         db_description_embeddings.add_texts([description])
-        #         print('added an embedding')
-        #         self.add_episode_records(title)
-        #         i += 1
-        #     elif len(titles) == len(items):
-        #         i = items_limit
-        #     j += 1
-    
-    # Episode records methods
-    def get_episode_records(self):
-        with open(f'{helpers.get_desc_emb_meta_path()}', 'r') as f:
-            records = json.load(f)['episode_records']
-        return records
-    
-    def save_episode_records(self, records):
-        with open(f'{helpers.get_desc_emb_meta_path()}', 'w') as f:
-            json.dump({'episode_records': records}, f)
         
-    def add_episode_records(self, episode_title):
-        records = self.get_episode_records()
-        dicty = {'podcast':self.name, 'title': episode_title}
-        records += [dicty]
-        self.save_episode_records(records)
+        i = 0 
+        j = 0 
+        while i < items_limit: 
+            item = items[j]
+            description = self.get_cleaned_description(item)
+            if description not in db_descriptions:
+                # Agregar description embedding 
+                db_description_embeddings.add_texts([description])
+                i += 1
+            elif len(db_descriptions) == len(items):
+                i = items_limit
+            j += 1
 
     # Paragraph embeddings methods    
     def update_paragraph_embeddings(self, slugified_episode, url):
@@ -123,7 +89,7 @@ class Podcast:
             documents = loader.load()
             text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
             docs = text_splitter.split_documents(documents)
-            store_embeddings(docs, slugified_episode, episodes_embeddings_path, document=True)
+            create_embeddings(docs, slugified_episode, episodes_embeddings_path, document=True)
 
     def generate_transcript(self, episode_path, url):
         base_dir = helpers.get_root_dir()

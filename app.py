@@ -25,8 +25,7 @@ def get_episodes_metadata(podcast_items):
     return list(zip(episode_urls, episode_titles))
 
 def get_matched_paragraphs(message, raw_podcast_list, **kwargs):
-    
-    matched_paragraphs = []
+    matched = []
     # Obtener arreglo con objetos tipo podcast
     podcast_list = [Podcast(raw_podcast['name'], raw_podcast['rss_feed_url']) for raw_podcast in raw_podcast_list]
 
@@ -39,19 +38,17 @@ def get_matched_paragraphs(message, raw_podcast_list, **kwargs):
         
         for episode in episodes_metadata:
             url, title = episode
-            episode_path = f'{slugify(title)}.json'
-
+            slugified_episode = f'{slugify(title)}'
             # Actualizar paragraph_embbeddings
-            podcast.update_paragraph_embeddings(episode_path, url)
-            # Obtener el paragraph_embeddings del episodio
-            paragraph_embeddings = podcast.get_paragraph_embeddings(episode_path)
-            paragraph_embeddings_sorted = sorted(paragraph_embeddings, 
-                                                key = lambda x: cosine_similarity(x['embedding'], message_embedding),
-                                                reverse=True)
-
-            matched_paragraphs += [{'title': title, 'paragraphs': [x['paragraph'] for x in paragraph_embeddings_sorted[:TOP_LIMIT]]}]
-        
-    return matched_paragraphs
+            podcast.update_paragraph_embeddings(slugified_episode, url)
+            # Obtener los top_limit = 2 párrafos del episodio con mayor similitud
+            db_transcription_embeddings = hp.load_embeddings(slugified_episode, hp.get_par_emb_dir())
+            retriever = db_transcription_embeddings.as_retriever(search_kwargs=kwargs)
+            docs = retriever.get_relevant_documents(message)
+            matched_paragraphs = [x.page_content for x in docs]
+            matched += [{'podcast':podcast.name, 'title': title, 'matched_paragraphs':matched_paragraphs}]
+            
+    return matched
 
 
 def main():
@@ -129,10 +126,10 @@ def main():
             st.session_state.messages.append({"role": "user", "content": prompt})
         else:
             # Asimilar spotify search al empezar el chat
-            matched_paragraphs_json = get_matched_paragraphs(message, raw_podcast_list, k=2)
-            matched_paragraphs = flatten([x['paragraphs'] for x in matched_paragraphs_json])
-            titles = set([x['title'] for x in matched_paragraphs_json])
-            custom_prompt = template.format(message=prompt, experts="\n".join(matched_paragraphs), episodes="\n".join(list(titles)))
+            matched = get_matched_paragraphs(message, raw_podcast_list, k=2)
+            matched_paragraphs = hp.flatten([x['matched_paragraphs'] for x in matched])
+            titles = [x['title'] for x in matched]
+            custom_prompt = template.format(message=prompt, experts="\n".join(matched_paragraphs), episodes="\n".join(titles))
             st.session_state.messages.append({"role": "user", "content": custom_prompt})
         # Display user message in chat message container
         with st.chat_message("user", avatar='🗿'):
@@ -179,10 +176,18 @@ def test1():
     docs = retriever.get_relevant_documents("Hola, últimamente me he sentido muy bien, crees que me pueda mantener así?")
     print(docs[0].page_content)
 
+def test2():
+    message = 'Hola, últimamente me he sentido muy bien, crees que me pueda mantener así?'
+    # Obtener los podcast disponibles
+    podcast_downloader_dir = hp.get_root_dir()
+    podcast_list_path = f'{podcast_downloader_dir}/podcast_list.json'
+    with open(podcast_list_path, 'r') as f:
+        raw_podcast_list = json.load(f)['podcast_list']
+    matched = get_matched_paragraphs(message, raw_podcast_list, k=2)
+    matched_paragraphs = hp.flatten([x['matched_paragraphs'] for x in matched])
+    print(matched_paragraphs)
+
 
 if __name__ == '__main__':
     # main()
-    # test()
-    # test1()
-    # test2()
-    # test3()
+    test2()

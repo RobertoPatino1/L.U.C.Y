@@ -64,7 +64,7 @@ def get_embeddings_transformer():
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2", model_kwargs={"device": "cpu"})
     return embeddings
 
-def store_embeddings(texts, store_name, path=get_desc_emb_dir(), embeddings = get_embeddings_transformer(), document=False):
+def store_embeddings(texts, store_name, path, embeddings = get_embeddings_transformer(), document=False):
     if not document:
         vectorStore = FAISS.from_texts(texts, embeddings)
     else:
@@ -73,7 +73,7 @@ def store_embeddings(texts, store_name, path=get_desc_emb_dir(), embeddings = ge
     with open(f"{path}/faiss_{store_name}.pkl", "wb") as f:
         pickle.dump(vectorStore, f)
 
-def load_embeddings(store_name, path=get_desc_emb_dir()):
+def load_embeddings(store_name, path):
     with open(f"{path}/faiss_{store_name}.pkl", "rb") as f:
         VectorStore = pickle.load(f)
     return VectorStore

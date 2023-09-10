@@ -179,7 +179,7 @@ def test1():
     docs = retriever.get_relevant_documents("Hola, últimamente me he sentido muy bien, crees que me pueda mantener así?")
     print(docs[0].page_content)
 
-def avance(message, **kwargs):
+def avance(message, file_name,  **kwargs):
     # Mensaje a ingresar el usuario 
     message = 'A veces no se cómo sentirme cuándo no sale lo que quiero como lo quiero'
     # Obtener los podcast disponibles
@@ -190,7 +190,7 @@ def avance(message, **kwargs):
     # Obtener 3 párrafos coincidentes por podcast
     matched = get_matched_paragraphs(message, raw_podcast_list, **kwargs)
     matched_paragraphs = hp.flatten([x['matched_paragraphs'] for x in matched])
-    with open('./matched_paragraphs.json', 'w') as f:
+    with open(file_name, 'w') as f:
         json.dump({message: matched}, f)
           
     print(len(matched_paragraphs))
@@ -202,7 +202,37 @@ def test3():
 
 if __name__ == '__main__':
     # main()
-    message = 'A veces no se cómo sentirme cuándo no sale lo que quiero como lo quiero'
+
+    '''
+    1. Escribir el mensaje
+    '''
+    mensaje = 'A veces no se cómo sentirme cuándo no sale lo que quiero como lo quiero'
     # Obtener 2 párrafos coincidentes al mensaje
-    avance(message, k=2)
+    file_name = 'matched_paragraphs_ex1'
+    avance(mensaje, file_name, k=2)
+
+    with open(f'./{file_name}.json', 'r') as f:
+        matched = json.load(f)
+
+    '''
+    2. Leer el archivo json generado. Este contiene los párrafos que coinciden con el texto dado en {mensaje}
+    '''
+    ''' file_name.json 
+    {'mensaje':
+        [
+            {
+                'podcast':'nombre_del_podcast',
+                'title':'titulo_del_episodio_del_podcast',
+                'matched_paragraphs':['texto_primer_parrafo', 
+                                        'texto_segundo_parrafo',
+                                          ...,
+                                            'texto_k-ésimo párrafo']
+            },
+            {...},
+            ...,
+            {...}
+        ]
+    }
+    '''
+    print(matched['message'][0]['matched_paragraphs'])
     # test3()

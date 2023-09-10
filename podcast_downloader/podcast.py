@@ -2,19 +2,20 @@ import requests
 from bs4 import BeautifulSoup
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
-import podcast_downloader.helpers as helpers
-from podcast_downloader.helpers import slugify, create_embeddings, load_embeddings
 import os
 import json
 import subprocess
 import sys
 sys.path.append('./')
+import podcast_downloader.helpers as helpers
+from podcast_downloader.helpers import slugify, load_embeddings, update_embeddings
 
 class Podcast:
     def __init__(self, name, rss_feed_url):
         # Definir atributos de clase
         self.name = name
         self.rss_feed_url = rss_feed_url
+        self.embeddings = helpers.get_embeddings_transformer()
         
         # Definir directorios de clase
         base_path = helpers.get_root_dir()
@@ -32,7 +33,9 @@ class Podcast:
         # Obtener los items del podcast
         items = self.get_items()
         # Obtener los embeddings del podcast respecto a sus descripciones
-        db_description_embeddings = load_embeddings(slugify(self.name), path = helpers.get_desc_emb_dir())
+        store_name = slugify(self.name)
+        path = helpers.get_desc_emb_dir()
+        db_description_embeddings = load_embeddings(store_name, path, self.embeddings, host_documents=False)['faiss_index']
         # Instanciar retriever
         retriever = db_description_embeddings.as_retriever(search_kwargs=kwargs)
         # Obtener descripciones que se asimilen al mensaje
@@ -53,17 +56,14 @@ class Podcast:
         '''
         # Obtener episodios del podcast
         items = self.get_items()
-
-        if f'faiss_{slugify(self.name)}.pkl' not in os.listdir(helpers.get_desc_emb_dir()):
-            item = items[0]
-            create_embeddings([self.get_cleaned_description(item)], f'{slugify(self.name)}', path=helpers.get_desc_emb_dir())
         
         # Obtener los embeddings del podcast respecto a sus descripciones
-        db_description_embeddings_metadata = load_embeddings(slugify(self.name), path=helpers.get_desc_emb_dir())
-        db_description_embeddings = db_description_embeddings_metadata['faiss_index']
-        db_descriptions = db_description_embeddings_metadata['texts']   
-
-        
+        store_name = slugify(self.name)
+        path = helpers.get_desc_emb_dir()
+        embeddings = helpers.get_embeddings_transformer()
+        metadata = load_embeddings(store_name, path, embeddings, host_documents=False)
+        db_descriptions = metadata['texts'] 
+    
         i = 0 
         j = 0 
         while i < items_limit: 
@@ -71,7 +71,7 @@ class Podcast:
             description = self.get_cleaned_description(item)
             if description not in db_descriptions:
                 # Agregar description embedding 
-                db_description_embeddings.add_texts([description])
+                update_embeddings([description],store_name, path, embeddings, host_documents=False)
                 i += 1
             elif len(db_descriptions) == len(items):
                 i = items_limit
@@ -87,9 +87,10 @@ class Podcast:
         if f'faiss_{slugified_episode}.pkl' not in os.listdir(episodes_embeddings_path):
             loader = TextLoader(f'{self.transcription_directory}/{slugified_episode}.txt')
             documents = loader.load()
-            text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+            text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
             docs = text_splitter.split_documents(documents)
-            create_embeddings(docs, slugified_episode, episodes_embeddings_path, document=True)
+            
+            load_embeddings(slugified_episode, episodes_embeddings_path, self.embeddings, host_documents=True, docs=docs)
 
     def generate_transcript(self, episode_path, url):
         base_dir = helpers.get_root_dir()

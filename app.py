@@ -4,7 +4,7 @@ import json
 import pickle
 import podcast_downloader.helpers as hp
 from podcast_downloader.podcast import Podcast
-from podcast_downloader.helpers import slugify
+from podcast_downloader.helpers import slugify, load_embeddings, update_embeddings
 
 def save_podcast_data(podcast_list):
     l_podcast_json = {'podcast_list':podcast_list}
@@ -27,6 +27,7 @@ def get_episodes_metadata(podcast_items):
 
 def get_matched_paragraphs(message, raw_podcast_list, **kwargs):
     matched = []
+    embeddings = hp.get_embeddings_transformer()
     # Obtener arreglo con objetos tipo podcast
     podcast_list = [Podcast(raw_podcast['name'], raw_podcast['rss_feed_url']) for raw_podcast in raw_podcast_list]
 
@@ -44,7 +45,7 @@ def get_matched_paragraphs(message, raw_podcast_list, **kwargs):
             podcast.update_paragraph_embeddings(slugified_episode, url)
             # Obtener los top_limit = 2 párrafos del episodio con mayor similitud
             par_emb_episode_dir = f'{hp.get_par_emb_dir()}/{slugify(podcast.name)}'
-            db_transcription_embeddings = hp.load_embeddings(slugified_episode, par_emb_episode_dir)
+            db_transcription_embeddings = load_embeddings(slugified_episode, par_emb_episode_dir, embeddings)['faiss_index']
             retriever = db_transcription_embeddings.as_retriever(search_kwargs=kwargs)
             docs = retriever.get_relevant_documents(message)
             matched_paragraphs = [x.page_content for x in docs]
@@ -178,15 +179,20 @@ def test1():
     docs = retriever.get_relevant_documents("Hola, últimamente me he sentido muy bien, crees que me pueda mantener así?")
     print(docs[0].page_content)
 
-def test2():
+def avance(message, **kwargs):
+    # Mensaje a ingresar el usuario 
     message = 'A veces no se cómo sentirme cuándo no sale lo que quiero como lo quiero'
     # Obtener los podcast disponibles
     podcast_downloader_dir = hp.get_root_dir()
     podcast_list_path = f'{podcast_downloader_dir}/podcast_list.json'
     with open(podcast_list_path, 'r') as f:
         raw_podcast_list = json.load(f)['podcast_list']
-    matched = get_matched_paragraphs(message, raw_podcast_list, k=3)
+    # Obtener 3 párrafos coincidentes por podcast
+    matched = get_matched_paragraphs(message, raw_podcast_list, **kwargs)
     matched_paragraphs = hp.flatten([x['matched_paragraphs'] for x in matched])
+    with open('./matched_paragraphs.json', 'w') as f:
+        json.dump({message: matched}, f)
+          
     print(len(matched_paragraphs))
 
 def test3():
@@ -196,5 +202,7 @@ def test3():
 
 if __name__ == '__main__':
     # main()
-    test2()
+    message = 'A veces no se cómo sentirme cuándo no sale lo que quiero como lo quiero'
+    # Obtener 2 párrafos coincidentes al mensaje
+    avance(message, k=2)
     # test3()

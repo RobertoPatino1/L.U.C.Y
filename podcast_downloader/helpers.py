@@ -68,7 +68,13 @@ def get_embeddings_transformer(model_name="sentence-transformers/all-MiniLM-L6-v
     return embeddings
 
 
-def update_embeddings(vectorStore, texts, store_name, path, embeddings = get_embeddings_transformer(), host_documents=False):
+def update_embeddings(texts_to_add:list, store_name:str, path:str, embeddings:HuggingFaceEmbeddings, host_documents:bool):
+    # Obtener el vectordb
+    metadata = load_embeddings(store_name, path, embeddings, host_documents=host_documents)
+    vectorStore = metadata['faiss_index']
+    # Agregar los textos al vectordb
+    vectorStore.add_texts(texts_to_add)
+    texts = metadata['texts'] + texts_to_add
     # Create a dictionary containing the metadata
     metadata = {
         'store_name': store_name,
@@ -81,36 +87,38 @@ def update_embeddings(vectorStore, texts, store_name, path, embeddings = get_emb
     with open(f"{path}/faiss_{store_name}.pkl", "wb") as f:
         pickle.dump(metadata, f)
 
-def load_embeddings(store_name:str, path:str, host_documents:bool):
+def load_embeddings(store_name:str, path:str, embeddings:HuggingFaceEmbeddings, **kwargs):
     embeddings_path = f"{path}/faiss_{store_name}.pkl"
-    if not os.exists(embeddings_path):
-        embeddings_model = get_embeddings_transformer()
-        embeddings_model_name = embeddings_model.name
-        texts = ['']
-        if not host_documents:
-            faiss_index = FAISS.from_texts(texts, embeddings_model)
+    if not os.path.exists(embeddings_path):
+        if not kwargs['host_documents']:
+            texts = ['']
+            faiss_index = FAISS.from_texts(texts, embeddings)
         else:
-            faiss_index = FAISS.from_documents(texts, embeddings_model)
-            
-        update_embeddings(faiss_index, texts, store_name, path, embeddings_model, host_documents)
-    else:
-        with open(embeddings_path, "rb") as f:
-            metadata = pickle.load(f)
-        
-        texts = metadata['texts']
-        embeddings_model_name = metadata['embeddings_model_name']
+            docs = kwargs['docs']
+            texts = [x.page_content for x in docs]
+            faiss_index = FAISS.from_documents(docs, embeddings)
 
-        # Deserialize the FAISS index
-        faiss_index = FAISS.deserialize_from_bytes(metadata['faiss_index'], 
-                                                get_embeddings_transformer(embeddings_model_name))
-    return {
-        'store_name': store_name,
-        'path': path,
-        'host_documents': host_documents,
-        'embeddings_model_name': embeddings_model_name,
-        'texts': texts,
-        'faiss_index': faiss_index
-    }
+        # Create a dictionary containing the metadata    
+        metadata = {
+            'store_name': store_name,
+            'host_documents': kwargs['host_documents'],
+            'embeddings_model_name': embeddings.model_name,
+            'texts': texts,
+            'faiss_index': faiss_index.serialize_to_bytes()  # Serialize the FAISS index
+        }
+
+        # Guardar metadata
+        with open(embeddings_path, "wb") as f:
+            pickle.dump(metadata, f)
+    
+    with open(embeddings_path, "rb") as f:
+        metadata = pickle.load(f)
+    
+    # Deserialize the FAISS index 
+    faiss_index = FAISS.deserialize_from_bytes(metadata['faiss_index'], embeddings)
+    metadata['faiss_index'] = faiss_index
+
+    return metadata
 
 # Test methods
 def test():
@@ -137,20 +145,20 @@ def test2():
     print([doc.page_content for doc in docs])
 
 def test3():
-    # create_embeddings(['hola mundo'], 'test', './')
-    # db_metadata = load_embeddings('test', './')
-    # db = db_metadata['faiss_index']
-    # added_texts = ['adios mundo', 'saludos mundo']
-    # db.add_texts(added_texts)
-    # texts = db_metadata['texts'] + added_texts
-    # update_embeddings(db, texts, db_metadata['store_name'], db_metadata['path'])
-    
-
+    create_embeddings([''], 'test', './')
     db_metadata = load_embeddings('test', './')
     db = db_metadata['faiss_index']
-    retriever = db.as_retriever(search_kwargs={"k": 2})
-    docs = retriever.get_relevant_documents("hola mundo")
-    print([doc.page_content for doc in docs])
+    added_texts = ['adios mundo', 'saludos mundo']
+    db.add_texts(added_texts)
+    texts = db_metadata['texts'] + added_texts
+    update_embeddings(db, texts, db_metadata['store_name'], db_metadata['path'])
+    
+    # embeddings = get_embeddings_transformer()
+    # db_metadata = load_embeddings('test', './', embeddings)
+    # db = db_metadata['faiss_index']
+    # retriever = db.as_retriever(search_kwargs={"k": 2})
+    # docs = retriever.get_relevant_documents("hola mundo")
+    # print([doc.page_content for doc in docs])
 
 if __name__ == '__main__':
     # test2()

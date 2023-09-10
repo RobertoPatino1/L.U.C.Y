@@ -1,6 +1,7 @@
 import streamlit as st
 import openai
 import json
+import pickle
 import podcast_downloader.helpers as hp
 from podcast_downloader.podcast import Podcast
 from podcast_downloader.helpers import slugify
@@ -42,7 +43,8 @@ def get_matched_paragraphs(message, raw_podcast_list, **kwargs):
             # Actualizar paragraph_embbeddings
             podcast.update_paragraph_embeddings(slugified_episode, url)
             # Obtener los top_limit = 2 párrafos del episodio con mayor similitud
-            db_transcription_embeddings = hp.load_embeddings(slugified_episode, hp.get_par_emb_dir())
+            par_emb_episode_dir = f'{hp.get_par_emb_dir()}/{slugify(podcast.name)}'
+            db_transcription_embeddings = hp.load_embeddings(slugified_episode, par_emb_episode_dir)
             retriever = db_transcription_embeddings.as_retriever(search_kwargs=kwargs)
             docs = retriever.get_relevant_documents(message)
             matched_paragraphs = [x.page_content for x in docs]
@@ -177,17 +179,22 @@ def test1():
     print(docs[0].page_content)
 
 def test2():
-    message = 'Hola, últimamente me he sentido muy bien, crees que me pueda mantener así?'
+    message = 'A veces no se cómo sentirme cuándo no sale lo que quiero como lo quiero'
     # Obtener los podcast disponibles
     podcast_downloader_dir = hp.get_root_dir()
     podcast_list_path = f'{podcast_downloader_dir}/podcast_list.json'
     with open(podcast_list_path, 'r') as f:
         raw_podcast_list = json.load(f)['podcast_list']
-    matched = get_matched_paragraphs(message, raw_podcast_list, k=2)
+    matched = get_matched_paragraphs(message, raw_podcast_list, k=3)
     matched_paragraphs = hp.flatten([x['matched_paragraphs'] for x in matched])
-    print(matched_paragraphs)
+    print(len(matched_paragraphs))
 
+def test3():
+    path = './podcast_downloader/Embedding_store/description_embeddings/faiss_psicologia-al-desnudo-psimammoliti.pkl'
+    with open(path, "rb") as f:
+        VectorStore = pickle.load(f)
 
 if __name__ == '__main__':
     # main()
     test2()
+    # test3()

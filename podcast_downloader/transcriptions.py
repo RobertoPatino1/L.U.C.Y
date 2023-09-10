@@ -19,6 +19,7 @@ def create_transcripts(podcast_list, **kwargs):
 			print("Uploading", download)
 			file_path = f'{podcast.download_directory}/{download}'
 			content_url = upload_to_assembly_ai(file_path)
+			os.remove(file_path)
 			transcription_id = transcribe_podcast(content_url, **kwargs)
 			podcast_metadata[download] = transcription_id
 

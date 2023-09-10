@@ -8,6 +8,9 @@ import os
 import json
 from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
+import sys
+sys.path.append('./')
+
 
 # Set OpenAI API key from Streamlit secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -60,8 +63,8 @@ def flatten(l):
     return [item for sublist in l for item in sublist]
 
 # Embeddings methods
-def get_embeddings_transformer():
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2", model_kwargs={"device": "cpu"})
+def get_embeddings_transformer(model_name="sentence-transformers/all-MiniLM-L6-v2"):
+    embeddings = HuggingFaceEmbeddings(model_name=model_name, model_kwargs={"device": "cpu"})
     return embeddings
 
 def store_embeddings(texts, store_name, path, embeddings = get_embeddings_transformer(), document=False):
@@ -70,11 +73,56 @@ def store_embeddings(texts, store_name, path, embeddings = get_embeddings_transf
     else:
         vectorStore = FAISS.from_documents(texts, embeddings)
 
+    # Create a dictionary containing the metadata
+    metadata = {
+        'store_name': store_name,
+        'is_document': document,
+        'embeddings_model_name': embeddings.model_name,
+        'texts': texts,
+        'faiss_index': vectorStore.serialize_to_bytes()  # Serialize the FAISS index
+    }
+
     with open(f"{path}/faiss_{store_name}.pkl", "wb") as f:
-        pickle.dump(vectorStore, f)
+        pickle.dump(metadata, f)
 
 def load_embeddings(store_name, path):
     with open(f"{path}/faiss_{store_name}.pkl", "rb") as f:
-        VectorStore = pickle.load(f)
-    return VectorStore
+        metadata = pickle.load(f)
+    
+    # Deserialize the FAISS index
+    faiss_index = FAISS.deserialize_from_bytes(metadata['faiss_index'], 
+                                               get_embeddings_transformer(metadata['embeddings_model_name']))
+    return {
+        'store_name': metadata['store_name'],
+        'is_document': metadata['is_document'],
+        'embeddings_model_name': metadata['embeddings_model_name'],
+        'texts': metadata['texts'],
+        'faiss_index': faiss_index
+    }
 
+def test():
+    store_embeddings(['hola mundo'], 'test', './')
+    db = load_embeddings('test', './')
+    db.add_texts(['adios mundo', 'saludos mundo'])
+    retriever = db.as_retriever(search_kwargs={"k": 2})
+    docs = retriever.get_relevant_documents("hola mundo")
+    print([doc.page_content for doc in docs])
+
+def test2():
+    # store_embeddings(['hola mundo'], 'test', './')
+    # db_metadata = load_embeddings('test', './')
+    # db = db_metadata['faiss_index']
+    # added_texts = ['adios mundo', 'saludos mundo']
+    # db.add_texts(added_texts)
+    # texts = db_metadata['texts'] + added_texts
+    # store_embeddings(texts, db_metadata['store_name'], './')
+
+    db_metadata = load_embeddings('test', './')
+    db = db_metadata['faiss_index']
+    retriever = db.as_retriever(search_kwargs={"k": 2})
+    docs = retriever.get_relevant_documents("hola mundo")
+    print([doc.page_content for doc in docs])
+
+
+# if __name__ == '__main__':
+#     test2()

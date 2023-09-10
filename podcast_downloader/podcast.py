@@ -7,6 +7,8 @@ from podcast_downloader.helpers import slugify, store_embeddings, load_embedding
 import os
 import json
 import subprocess
+import sys
+sys.path.append('./')
 
 class Podcast:
     def __init__(self, name, rss_feed_url):
@@ -51,37 +53,47 @@ class Podcast:
         '''
         # Obtener episodios del podcast
         items = self.get_items()
-        if f'{slugify(self.name)}.pkl' not in os.listdir(helpers.get_desc_emb_dir()):
-            # Empezar db con el primer episodio más reciente
+        # if f'faiss_{slugify(self.name)}.pkl' not in os.listdir(helpers.get_desc_emb_dir()):
+        #     # Empezar db con el primer episodio más reciente
+        #     items10 = items[:10]
+        #     episode_titles = [item.find('title').text for item in items10]
+        #     store_embeddings([self.get_cleaned_description(item) for item in items10], f'{slugify(self.name)}', path = helpers.get_desc_emb_dir())
+        #     for episode_title in episode_titles:
+        #         self.add_episode_records(episode_title)
+        #     print('weirdly db initialize')
+
+        if f'faiss_{slugify(self.name)}.pkl' not in os.listdir(helpers.get_desc_emb_dir()):
             item = items[0]
+            store_embeddings([self.get_cleaned_description(item)], f'{slugify(self.name)}', path=helpers.get_desc_emb_dir()) 
             episode_title = item.find('title').text
-            store_embeddings([self.get_cleaned_description(item)], f'{slugify(self.name)}', path = helpers.get_desc_emb_dir())
             self.add_episode_records(episode_title)
+            print('db_initialization')
         
-        # Obtener los embeddings del podcast respecto a sus descripciones
-        db_description_embeddings = load_embeddings(slugify(self.name), path=helpers.get_desc_emb_dir())
+        # # Obtener los embeddings del podcast respecto a sus descripciones
+        # db_description_embeddings = load_embeddings(slugify(self.name), path=helpers.get_desc_emb_dir())
 
-        # Obtener episode records del podcast
-        records = self.get_episode_records()
-        episode_records = [x for x in records if x['podcast'] == self.name] 
+        # # Obtener episode records del podcast
+        # records = self.get_episode_records()
+        # episode_records = [x for x in records if x['podcast'] == self.name] 
     
-        # Obtener los títulos de episode_records
-        titles = [x['title'] for x in episode_records]
+        # # Obtener los títulos de episode_records
+        # titles = [x['title'] for x in episode_records]
 
-        i = 0 
-        j = 0 
-        while i < items_limit: 
-            item = items[j]
-            title = item.find('title').text
-            if (len(titles) == 0) or (title not in titles):
-                # Agregar description embedding 
-                description = self.get_cleaned_description(item)
-                db_description_embeddings.add_texts([description])
-                self.add_episode_records(title)
-                i += 1
-            elif len(titles) == len(items):
-                i = items_limit
-            j += 1
+        # i = 0 
+        # j = 0 
+        # while i < items_limit: 
+        #     item = items[j]
+        #     title = item.find('title').text
+        #     if (len(titles) == 0) or (title not in titles):
+        #         # Agregar description embedding 
+        #         description = self.get_cleaned_description(item)
+        #         db_description_embeddings.add_texts([description])
+        #         print('added an embedding')
+        #         self.add_episode_records(title)
+        #         i += 1
+        #     elif len(titles) == len(items):
+        #         i = items_limit
+        #     j += 1
     
     # Episode records methods
     def get_episode_records(self):
@@ -102,11 +114,11 @@ class Podcast:
     # Paragraph embeddings methods    
     def update_paragraph_embeddings(self, slugified_episode, url):
         transcripts_paths = os.listdir(self.transcription_directory)
-        if slugified_episode not in transcripts_paths:
+        if f'{slugified_episode}.txt' not in transcripts_paths:
             self.generate_transcript(slugified_episode, url)
 
         episodes_embeddings_path = helpers.get_dir(slugify(self.name), helpers.get_par_emb_dir())
-        if f'{slugified_episode}.pkl' not in os.listdir(episodes_embeddings_path):
+        if f'faiss_{slugified_episode}.pkl' not in os.listdir(episodes_embeddings_path):
             loader = TextLoader(f'{self.transcription_directory}/{slugified_episode}.txt')
             documents = loader.load()
             text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)

@@ -3,12 +3,10 @@ from bs4 import BeautifulSoup
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 import podcast_downloader.helpers as helpers
-from podcast_downloader.helpers import slugify, get_embedding, store_embeddings, load_embeddings
+from podcast_downloader.helpers import slugify, store_embeddings, load_embeddings
 import os
 import json
 import subprocess
-import time
-
 
 class Podcast:
     def __init__(self, name, rss_feed_url):
@@ -20,10 +18,10 @@ class Podcast:
         base_path = helpers.get_root_dir()
         self.download_directory = f'{base_path}/downloads/{slugify(name)}'
         self.transcription_directory = f'{base_path}/transcripts/{slugify(name)}'
-        self.paragraph_embeddings_directory = f'{base_path}/paragraph_embeddings/{slugify(name)}'
+
     
         # Crear directorios de clase
-        for dir in [self.download_directory, self.transcription_directory, self.paragraph_embeddings_directory]:
+        for dir in [self.download_directory, self.transcription_directory]:
             if not os.path.exists(dir):
                 os.makedirs(dir)
 
@@ -39,7 +37,7 @@ class Podcast:
         docs = retriever.get_relevant_documents(message)
         # Obtener los episodios indexados por título
         doc_descriptions = [x.page_content for x in docs]
-        items_descriptions = [self.get_cleaned_description(x.find('description').text) for x in items]
+        items_descriptions = [self.get_cleaned_description(x) for x in items]
 
         for doc_description in doc_descriptions:
             ind_description = items_descriptions.index(doc_description)
@@ -92,7 +90,7 @@ class Podcast:
     
     def save_episode_records(self, records):
         with open(f'{helpers.get_desc_emb_meta_path()}', 'w') as f:
-            json.dump(records, f)
+            json.dump({'episode_records': records}, f)
         
     def add_episode_records(self, episode_title):
         records = self.get_episode_records()

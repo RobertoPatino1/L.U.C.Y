@@ -3,7 +3,7 @@ import openai
 import json
 import podcast_downloader.helpers as hp
 from podcast_downloader.podcast import Podcast
-from podcast_downloader.helpers import slugify, cosine_similarity, get_embedding, flatten
+from podcast_downloader.helpers import slugify
 
 def save_podcast_data(podcast_list):
     l_podcast_json = {'podcast_list':podcast_list}

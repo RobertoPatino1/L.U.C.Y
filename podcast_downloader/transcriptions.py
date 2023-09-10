@@ -77,9 +77,9 @@ def save_transcriptions_locally(podcast_list):
 			episode_name = os.path.splitext(episode)[0]
 			output_path = f'{podcast.transcription_directory}/{episode_name}.txt'
 			print('Trying to save', output_path)
-			paragraphs = wait_and_get_assembly_ai_transcript(transcription_id)
+			transcription  = wait_and_get_assembly_ai_transcript(transcription_id)
 			with open(output_path, 'w') as f:
-				json.dump(paragraphs, f)
+				f.write(transcription['text'])
 
 def get_assembly_ai_transcript(transcription_id):
 	headers = {'authorization': st.secrets['ASSEMBLY_AI_KEY']}
@@ -98,17 +98,17 @@ def get_podcast_list(raw_podcast_list):
 def wait_and_get_assembly_ai_transcript(transcription_id):
 	while True:
 		response = get_assembly_ai_transcript(transcription_id)
-		if response.status_code == 200:
+		if response['status'] == 'completed':
 			print("Got transcript")
 			break
-		elif response.status_code == 404:
+		elif response['status'] == 'error':
 			print("Error getting transcript")
 			break
 		else:
 			print("Transcript not available, trying again in 10 seconds...")
 			time.sleep(10) # Try again in 10 seconds
 
-	return response.json()
+	return response
 
 
 if __name__ == '__main__':

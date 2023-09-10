@@ -44,7 +44,7 @@ def get_par_emb_dir():
     return get_dir('paragraph_embeddings', get_embeddings_dir())
 
 def get_desc_emb_meta_path():
-    return get_dir('metadata.json', get_desc_emb_dir(), 'episodes_record')
+    return get_dir('metadata.json', get_desc_emb_dir(), 'episode_records')
 
 def get_dir(file_name, dir, key=None):   
     if not file_name in os.listdir(dir):

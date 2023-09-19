@@ -98,7 +98,7 @@ class Podcast:
                 db = FAISS.from_documents(docs, embeddings)
             else:
                 db =  FAISS.load_local(DB_FAISS_PATH, embeddings)
-                db.add_documents(docs, embeddings)
+                db.add_documents(documents=docs)
                  
             db.save_local(DB_FAISS_PATH)
 

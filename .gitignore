@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 
 .vscode
+Embedding_store
+transcripts
+vectorstore

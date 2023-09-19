@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from langchain.document_loaders import TextLoader
-from langchain.text_splitter import CharacterTextSplitter
+from langchain.embeddings import HuggingFaceEmbeddings
 import os
 import json
 import subprocess
@@ -9,6 +8,15 @@ import sys
 sys.path.append('./')
 import podcast_downloader.helpers as helpers
 from podcast_downloader.helpers import slugify, load_embeddings, update_embeddings
+from langchain.vectorstores import FAISS
+from langchain.document_loaders import DirectoryLoader, TextLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+DB_FAISS_PATH = 'vectorstore/db_faiss'
+DATA_PATH = './podcast_downloader/transcripts'
+DESCRIPTIONS_PATH = './podcast_downloader/descriptions_vectorstore/db_faiss'
+embeddings = HuggingFaceEmbeddings(model_name='intfloat/multilingual-e5-small',
+                                       model_kwargs={'device': 'cpu'})
 
 class Podcast:
     def __init__(self, name, rss_feed_url):
@@ -50,7 +58,7 @@ class Podcast:
 
         return matched_podcasts
     
-    def update_description_embeddings(self, items_limit=10):
+    def update_description_embeddings(self):
         '''
         Actualizar description_embeddings del podcast con un máximo de items_limit 
         '''
@@ -60,42 +68,54 @@ class Podcast:
         # Obtener los embeddings del podcast respecto a sus descripciones
         store_name = slugify(self.name)
         path = helpers.get_desc_emb_dir()
-        embeddings = helpers.get_embeddings_transformer()
         metadata = load_embeddings(store_name, path, embeddings, host_documents=False)
         db_descriptions = metadata['texts'] 
     
-        i = 0 
-        j = 0 
-        while i < items_limit: 
-            item = items[j]
+        for item in items:
             description = self.get_cleaned_description(item)
             if description not in db_descriptions:
                 # Agregar description embedding 
                 update_embeddings([description],store_name, path, embeddings, host_documents=False)
-                i += 1
-            elif len(db_descriptions) == len(items):
-                i = items_limit
-            j += 1
 
     # Paragraph embeddings methods    
-    def update_paragraph_embeddings(self, slugified_episode, url):
+    def update_paragraph_embeddings(self, title, url):
+        slugified_episode = slugify(title)
         transcripts_paths = os.listdir(self.transcription_directory)
         if f'{slugified_episode}.txt' not in transcripts_paths:
             self.generate_transcript(slugified_episode, url)
 
-        episodes_embeddings_path = helpers.get_dir(slugify(self.name), helpers.get_par_emb_dir())
-        if f'faiss_{slugified_episode}.pkl' not in os.listdir(episodes_embeddings_path):
+            db = None
+
             loader = TextLoader(f'{self.transcription_directory}/{slugified_episode}.txt')
             documents = loader.load()
-            text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=400, chunk_overlap=50)
             docs = text_splitter.split_documents(documents)
+            for doc in docs:
+                doc.metadata['podcast'] = self.name
+                doc.metadata['episode'] = title
             
-            load_embeddings(slugified_episode, episodes_embeddings_path, self.embeddings, host_documents=True, docs=docs)
+            if not os.path.exists(DB_FAISS_PATH):
+                db = FAISS.from_documents(docs, embeddings)
+            else:
+                db =  FAISS.load_local(DB_FAISS_PATH, embeddings)
+                db.add_documents(docs, embeddings)
+                 
+            db.save_local(DB_FAISS_PATH)
+
+
+        # episodes_embeddings_path = helpers.get_dir(slugify(self.name), helpers.get_par_emb_dir())
+        # if f'faiss_{slugified_episode}.pkl' not in os.listdir(episodes_embeddings_path):
+        #     loader = TextLoader(f'{self.transcription_directory}/{slugified_episode}.txt')
+        #     documents = loader.load()
+        #     text_splitter = CharacterTextSplitter(chunk_size=400, chunk_overlap=50)
+        #     docs = text_splitter.split_documents(documents)
+            
+        #     load_embeddings(slugified_episode, episodes_embeddings_path, self.embeddings, host_documents=True, docs=docs)
 
     def generate_transcript(self, episode_path, url):
         base_dir = helpers.get_root_dir()
         download_episode_path = f'{self.download_directory}/{episode_path}.mp3'
-
+        print("Download path: ", download_episode_path)
         episode_metadata_json = {'url': url, 'download_episode_path': download_episode_path}
         with open(f'{base_dir}/podcast_metadata.json', 'w') as f:
             json.dump(episode_metadata_json, f)

@@ -8,6 +8,9 @@ from langchain.embeddings import HuggingFaceEmbeddings
 import sys
 sys.path.append('./')
 
+embeddings_model_name = 'intfloat/multilingual-e5-small'
+
+
 # Parse methods
 def slugify(value, allow_unicode=False):
     """
@@ -55,8 +58,8 @@ def flatten(l):
     return [item for sublist in l for item in sublist]
 
 # Embeddings methods
-def get_embeddings_transformer(model_name="sentence-transformers/all-MiniLM-L6-v2"):
-    embeddings = HuggingFaceEmbeddings(model_name=model_name, model_kwargs={"device": "cpu"})
+def get_embeddings_transformer(embeddings_model_name=embeddings_model_name):
+    embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name, model_kwargs={"device": "cpu"})
     return embeddings
 
 
@@ -81,6 +84,7 @@ def update_embeddings(texts_to_add:list, store_name:str, path:str, embeddings:Hu
 
 def load_embeddings(store_name:str, path:str, embeddings:HuggingFaceEmbeddings, **kwargs):
     embeddings_path = f"{path}/faiss_{store_name}.pkl"
+    print(embeddings_path)
     if not os.path.exists(embeddings_path):
         if not kwargs['host_documents']:
             texts = ['']
@@ -111,47 +115,3 @@ def load_embeddings(store_name:str, path:str, embeddings:HuggingFaceEmbeddings, 
     metadata['faiss_index'] = faiss_index
 
     return metadata
-
-# Test methods
-def test():
-    create_embeddings(['hola mundo'], 'test', './')
-    db = load_embeddings('test', './')
-    db.add_texts(['adios mundo', 'saludos mundo'])
-    retriever = db.as_retriever(search_kwargs={"k": 2})
-    docs = retriever.get_relevant_documents("hola mundo")
-    print([doc.page_content for doc in docs])
-
-def test2():
-    # store_embeddings(['hola mundo'], 'test', './')
-    # db_metadata = load_embeddings('test', './')
-    # db = db_metadata['faiss_index']
-    # added_texts = ['adios mundo', 'saludos mundo']
-    # db.add_texts(added_texts)
-    # texts = db_metadata['texts'] + added_texts
-    # store_embeddings(texts, db_metadata['store_name'], './')
-
-    db_metadata = load_embeddings('test', './')
-    db = db_metadata['faiss_index']
-    retriever = db.as_retriever(search_kwargs={"k": 2})
-    docs = retriever.get_relevant_documents("hola mundo")
-    print([doc.page_content for doc in docs])
-
-def test3():
-    create_embeddings([''], 'test', './')
-    db_metadata = load_embeddings('test', './')
-    db = db_metadata['faiss_index']
-    added_texts = ['adios mundo', 'saludos mundo']
-    db.add_texts(added_texts)
-    texts = db_metadata['texts'] + added_texts
-    update_embeddings(db, texts, db_metadata['store_name'], db_metadata['path'])
-    
-    # embeddings = get_embeddings_transformer()
-    # db_metadata = load_embeddings('test', './', embeddings)
-    # db = db_metadata['faiss_index']
-    # retriever = db.as_retriever(search_kwargs={"k": 2})
-    # docs = retriever.get_relevant_documents("hola mundo")
-    # print([doc.page_content for doc in docs])
-
-# if __name__ == '__main__':
-#     # test2()
-#     test3()

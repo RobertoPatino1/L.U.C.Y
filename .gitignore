@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 .vscode
-Embedding_store
-transcripts
-vectorstore
+podcast_downloader/Embedding_store/
+podcast_downloader/transcripts/
+podcast_downloader/downloads/
+vectorstore/

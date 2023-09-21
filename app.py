@@ -1,13 +1,16 @@
+import time
+import json
+import chainlit as cl
+
 from langchain import PromptTemplate
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
 from langchain.llms import CTransformers
 from langchain.chains import RetrievalQA
-import chainlit as cl
-import json
+from langchain.vectorstores import FAISS
+
+from podcast_downloader.podcast import load_embeddings
 from podcast_downloader.podcast import Podcast
-from podcast_downloader.helpers import slugify
-import time
+
+
 
 DB_FAISS_PATH = 'vectorstore/db_faiss'
 RAW_PODCAST_LIST_PATH = './podcast_downloader/podcast_list.json'
@@ -41,16 +44,6 @@ def get_episodes_metadata(podcast_items):
     episode_titles = [podcast.find('title').text for podcast in podcast_items]
     return list(zip(episode_urls, episode_titles))
 
-# async def ingest():
-#     loader = DirectoryLoader(DATA_PATH,
-#                                 glob='**/*.txt',
-#                                 loader_cls=TextLoader,)
-#     documents = loader.load()
-#     text_splitter = RecursiveCharacterTextSplitter(chunk_size=400,
-#                                                    chunk_overlap=50)
-#     docs = text_splitter.split_documents(documents)
-#     db = FAISS.from_documents(docs, embeddings)
-#     db.save_local(DB_FAISS_PATH)
 
 async def update_data(message, **kwargs):
     with open(RAW_PODCAST_LIST_PATH, 'r') as f:
@@ -88,20 +81,20 @@ def retrieval_qa_chain(llm, prompt, db):
     return qa_chain
 
 #Loading the model
+@cl.cache
 def load_llm():
     # Load the locally downloaded model here
     llm = CTransformers(
         model = "TheBloke/Llama-2-7B-Chat-GGML",
         model_type="llama",
-        max_new_tokens = 512,
+        max_new_tokens = 1054,
         temperature = 0.5
     )
     return llm
 
 #QA Model Function
 async def qa_bot():
-    embeddings = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-small",
-                                       model_kwargs={'device': 'cpu'})
+    embeddings = load_embeddings()
     db = FAISS.load_local(DB_FAISS_PATH, embeddings)
     llm = load_llm()
     qa_prompt = set_custom_prompt()
@@ -110,31 +103,14 @@ async def qa_bot():
 
     return qa
 
-#output function
-def final_result(query):
-    qa_result = qa_bot()
-    response = qa_result({'query': query})
-    return response
-
-# def get_result(message):
-#     start_time = time.time()
-#     update_data(message, k=2)
-#     ingest()
-#     response = final_result(message)
-#     print(response)
-#     print("--- %s seconds ---" % (time.time() - start_time))
-
-
-# # get_result('¿Cómo funcionan las emociones prohibidas en los niños?')
-# get_result('¿Qué es la inteligencia emocional?')
-
 # chainlit code
 @cl.on_chat_start
 async def start():
-    msg = cl.Message(content="Starting the bot...")
-    await msg.send()
-    msg.content = "Hola, soy Lucy. Qué quieres hablar conmigo hoy?"
-    await msg.update()
+    # msg = cl.Message(content="Starting the bot...")
+    # await msg.send()
+    # msg.content = "Hola, soy Lucy. Qué quieres hablar conmigo hoy?"
+    # await msg.update()
+    pass
 
 @cl.on_message
 async def main(message):
@@ -154,15 +130,35 @@ async def main(message):
     # await cl.Message(content=answer).send()
     sources = res["source_documents"]
 
-    src_message = "Sources:\n\n\n" 
+    src_message = "Fuentes:\n\n\n" 
     for document in sources:
-        src_message += f"Podcast: {document.metadata['podcast']}\n Episodio: \n{document.metadata['episode']}\n"
-        src_message += f"Content: \n{document.page_content}\n\n"
+        src_message += f"Podcast: {document.metadata['podcast']}\n Episodio: {document.metadata['episode']}\n"
+        src_message += f"Contenido: \n{document.page_content}\n\n"
         
     await cl.Message(content=src_message).send()
 
-    print("--- %s seconds ---" % (time.time() - start_time))
+    print("--- entire_process: %s seconds ---" % (time.time() - start_time))
     
+# Testeos
+
+# output function
+# def final_result(query):
+#     qa_result = qa_bot()
+#     response = qa_result({'query': query})
+#     return response
+
+# def get_result(message):
+#     start_time = time.time()
+#     update_data(message, k=2)
+#     ingest()
+#     response = final_result(message)
+#     print(response)
+#     print("--- %s seconds ---" % (time.time() - start_time))
+
+
+# # get_result('¿Cómo funcionan las emociones prohibidas en los niños?')
+# get_result('¿Qué es la inteligencia emocional?')
+
     
     
     

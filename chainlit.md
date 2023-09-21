@@ -1,14 +1,13 @@
-# Welcome to Chainlit! 🚀🤖
+# ¡Bienvenid@ a Coach Chatbot! 🚀🤖
 
-Hi there, Developer! 👋 We're excited to have you on board. Chainlit is a powerful tool designed to help you prototype, debug and share applications built on top of LLMs.
+¡Hola! Soy Lucy, tu coach personal. Estoy aquí para ayudarte en tu viaje de crecimiento y desarrollo personal. ¿En qué puedo asistirte hoy? 👩
 
-## Useful Links 🔗
+**Recuerda que prefiero preguntas por encima de afirmaciones** 🪄❓
 
-- **Documentation:** Get started with our comprehensive [Chainlit Documentation](https://docs.chainlit.io) 📚
-- **Discord Community:** Join our friendly [Chainlit Discord](https://discord.gg/k73SQ3FyUh) to ask questions, share your projects, and connect with other developers! 💬
+## Recursos Útiles 🔗
 
-We can't wait to see what you create with Chainlit! Happy coding! 💻😊
+- **Planificación y Metas:** Aprende a establecer y alcanzar tus metas con [Lucy's Goal Planner](https://lucycoaching.com/goal-planner) 📈
+- **Comunidad y Apoyo:** Únete a nuestra comunidad en [Lucy's Coaching Hub](https://lucycoaching.com/community) para compartir experiencias y recibir apoyo de otros miembros 💬
 
-## Welcome screen
+Estoy emocionada de acompañarte en este viaje. ¡Hablemos sobre tus metas y cómo puedo apoyarte! 💪😊
 
-To modify the welcome screen, edit the `chainlit.md` file at the root of your project. If you do not want a welcome screen, just leave this file empty.

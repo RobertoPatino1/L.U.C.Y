@@ -1,14 +1,9 @@
 import re
 import unicodedata
-import pickle
 import os
 import json
-from langchain.vectorstores import FAISS
-from langchain.embeddings import HuggingFaceEmbeddings
 import sys
 sys.path.append('./')
-
-embeddings_model_name = 'intfloat/multilingual-e5-small'
 
 
 # Parse methods
@@ -57,61 +52,4 @@ def get_dir(file_name, dir, key=None):
 def flatten(l):
     return [item for sublist in l for item in sublist]
 
-# Embeddings methods
-def get_embeddings_transformer(embeddings_model_name=embeddings_model_name):
-    embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name, model_kwargs={"device": "cpu"})
-    return embeddings
 
-
-def update_embeddings(texts_to_add:list, store_name:str, path:str, embeddings:HuggingFaceEmbeddings, host_documents:bool):
-    # Obtener el vectordb
-    metadata = load_embeddings(store_name, path, embeddings, host_documents=host_documents)
-    vectorStore = metadata['faiss_index']
-    # Agregar los textos al vectordb
-    vectorStore.add_texts(texts_to_add)
-    texts = metadata['texts'] + texts_to_add
-    # Create a dictionary containing the metadata
-    metadata = {
-        'store_name': store_name,
-        'host_documents': host_documents,
-        'embeddings_model_name': embeddings.model_name,
-        'texts': texts,
-        'faiss_index': vectorStore.serialize_to_bytes()  # Serialize the FAISS index
-    }
-
-    with open(f"{path}/faiss_{store_name}.pkl", "wb") as f:
-        pickle.dump(metadata, f)
-
-def load_embeddings(store_name:str, path:str, embeddings:HuggingFaceEmbeddings, **kwargs):
-    embeddings_path = f"{path}/faiss_{store_name}.pkl"
-    print(embeddings_path)
-    if not os.path.exists(embeddings_path):
-        if not kwargs['host_documents']:
-            texts = ['']
-            faiss_index = FAISS.from_texts(texts, embeddings)
-        else:
-            docs = kwargs['docs']
-            texts = [x.page_content for x in docs]
-            faiss_index = FAISS.from_documents(docs, embeddings)
-
-        # Create a dictionary containing the metadata    
-        metadata = {
-            'store_name': store_name,
-            'host_documents': kwargs['host_documents'],
-            'embeddings_model_name': embeddings.model_name,
-            'texts': texts,
-            'faiss_index': faiss_index.serialize_to_bytes()  # Serialize the FAISS index
-        }
-
-        # Guardar metadata
-        with open(embeddings_path, "wb") as f:
-            pickle.dump(metadata, f)
-    
-    with open(embeddings_path, "rb") as f:
-        metadata = pickle.load(f)
-    
-    # Deserialize the FAISS index 
-    faiss_index = FAISS.deserialize_from_bytes(metadata['faiss_index'], embeddings)
-    metadata['faiss_index'] = faiss_index
-
-    return metadata

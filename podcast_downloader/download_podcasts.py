@@ -1,7 +1,8 @@
 import requests
 import os
-import helpers
 import json
+
+base_dir = './podcast_downloader'
 
 def get_mp3_file(url):
     # It redirects the url before you get the actual file
@@ -16,7 +17,6 @@ def save_mp3_file(file, file_path):
 if __name__ == '__main__':
     print("\n--- Downloading episodes... ---\n")
     # Obtener metadata del episodio
-    base_dir = helpers.get_root_dir()
     with open(f'{base_dir}/podcast_metadata.json', 'r') as f:
         episode = json.load(f)
 

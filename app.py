@@ -1,9 +1,29 @@
-import streamlit as st
+import time
 import json
-import pickle
-import podcast_downloader.helpers as hp
+import chainlit as cl
+
+from langchain import PromptTemplate
+from langchain.llms import CTransformers
+from langchain.chains import RetrievalQA
+from langchain.vectorstores import FAISS
+
+from podcast_downloader.podcast import load_embeddings
 from podcast_downloader.podcast import Podcast
-from podcast_downloader.helpers import slugify, load_embeddings
+
+
+
+DB_FAISS_PATH = 'vectorstore/db_faiss'
+RAW_PODCAST_LIST_PATH = './podcast_downloader/podcast_list.json'
+
+custom_prompt_template = """Utilice la siguiente información para responder la pregunta del usuario.
+Si no sabe la respuesta, simplemente diga que no la sabe, no intente inventar una respuesta.
+
+Contexto: {context}
+Pregunta: {question}
+
+Solo devuelva la útil respuesta a continuación y nada más.
+Respuesta útil:
+"""
 
 def save_podcast_data(podcast_list):
     l_podcast_json = {'podcast_list':podcast_list}
@@ -24,11 +44,12 @@ def get_episodes_metadata(podcast_items):
     episode_titles = [podcast.find('title').text for podcast in podcast_items]
     return list(zip(episode_urls, episode_titles))
 
-def get_matched_paragraphs(message, raw_podcast_list, **kwargs):
-    matched = []
-    embeddings = hp.get_embeddings_transformer()
-    # Obtener arreglo con objetos tipo podcast
+
+async def update_data(message, **kwargs):
+    with open(RAW_PODCAST_LIST_PATH, 'r') as f:
+        raw_podcast_list = json.load(f)['podcast_list']
     podcast_list = [Podcast(raw_podcast['name'], raw_podcast['rss_feed_url']) for raw_podcast in raw_podcast_list]
+
 
     for podcast in podcast_list:
         # Actualizar description_embeddings del podcast
@@ -36,198 +57,108 @@ def get_matched_paragraphs(message, raw_podcast_list, **kwargs):
         # Obtengo la metadata de top_limit = 2 episodios con mayor similitud
         podcast_items = podcast.search_items(message, **kwargs)
         episodes_metadata = get_episodes_metadata(podcast_items)
-        
         for episode in episodes_metadata:
             url, title = episode
-            slugified_episode = f'{slugify(title)}'
             # Actualizar paragraph_embbeddings
-            podcast.update_paragraph_embeddings(slugified_episode, url)
-            # Obtener los top_limit = 2 párrafos del episodio con mayor similitud
-            par_emb_episode_dir = f'{hp.get_par_emb_dir()}/{slugify(podcast.name)}'
-            db_transcription_embeddings = load_embeddings(slugified_episode, par_emb_episode_dir, embeddings)['faiss_index']
-            retriever = db_transcription_embeddings.as_retriever(search_kwargs=kwargs)
-            docs = retriever.get_relevant_documents(message)
-            matched_paragraphs = [x.page_content for x in docs]
-            matched += [{'podcast':podcast.name, 'title': title, 'matched_paragraphs':matched_paragraphs}]
-            
-    return matched
+            podcast.update_paragraph_embeddings(title, url)
 
+def set_custom_prompt():
+    """
+    Prompt template for QA retrieval for each vectorstore
+    """
+    prompt = PromptTemplate(template=custom_prompt_template,
+                            input_variables=['context', 'question'])
+    return prompt
 
-def main():
-    # Iniciar chat y obtener el arreglo de podcast disponibles en formato json
-    # Set page config
-    st.set_page_config(
-        page_title="Chatty", page_icon="🎯")
+#Retrieval QA Chain
+def retrieval_qa_chain(llm, prompt, db):
+    qa_chain = RetrievalQA.from_chain_type(llm=llm,
+                                       chain_type='stuff',
+                                       retriever=db.as_retriever(search_kwargs={'k': 2}),
+                                       return_source_documents=True,
+                                       chain_type_kwargs={'prompt': prompt}
+                                       )
+    return qa_chain
+
+#Loading the model
+@cl.cache
+def load_llm():
+    # Load the locally downloaded model here
+    llm = CTransformers(
+        model = "TheBloke/Llama-2-7B-Chat-GGML",
+        model_type="llama",
+        max_new_tokens = 1054,
+        temperature = 0.5
+    )
+    return llm
+
+#QA Model Function
+async def qa_bot():
+    embeddings = load_embeddings()
+    db = FAISS.load_local(DB_FAISS_PATH, embeddings)
+    llm = load_llm()
+    qa_prompt = set_custom_prompt()
     
-    # Empezar el chat inicial informativo del bot 
-    podcast_downloader_dir = hp.get_root_dir()
-    podcast_list_path = f'{podcast_downloader_dir}/podcast_list.json'
+    qa = retrieval_qa_chain(llm, qa_prompt, db)
 
-    # Obtener los podcast disponibles
-    with open(podcast_list_path, 'r') as f:
-        raw_podcast_list = json.load(f)['podcast_list']
+    return qa
 
-    # Inicializar podcast_list en streamlit session
-    if not 'podcast_list' in st.session_state:
-        st.session_state['podcast_list'] = raw_podcast_list
+# chainlit code
+@cl.on_chat_start
+async def start():
+    # msg = cl.Message(content="Starting the bot...")
+    # await msg.send()
+    # msg.content = "Hola, soy Lucy. Qué quieres hablar conmigo hoy?"
+    # await msg.update()
+    pass
+
+@cl.on_message
+async def main(message):
+    start_time = time.time()
+    await update_data(message, k=2)
+    # await ingest()
+    chain = await qa_bot()
+    msg = cl.Message(content="Getting data...")
+    await msg.send()
+
+    cb = cl.AsyncLangchainCallbackHandler(
+        stream_final_answer=True, answer_prefix_tokens=["FINAL", "ANSWER"]
+    )
+    cb.answer_reached = True
+    res = await chain.acall(message, callbacks=[cb])
+    # answer = res["result"] 
+    # await cl.Message(content=answer).send()
+    sources = res["source_documents"]
+
+    src_message = "Fuentes:\n\n\n" 
+    for document in sources:
+        src_message += f"Podcast: {document.metadata['podcast']}\n Episodio: {document.metadata['episode']}\n"
+        src_message += f"Contenido: \n{document.page_content}\n\n"
         
-    # Mostrar mensaje inicial informativo en el chat 
-    initial_message = """
-    Hola! Soy Lucy, tu coach personal, mis respuestas se basan en tus podcasts favoritos,
-    actualmente conozco de los siguientes podcast:\n
-    {podcasts}\n
-    Vamos cuéntame, de qué quieres hablar conmigo hoy 😊
-    """
+    await cl.Message(content=src_message).send()
 
-    with st.chat_message("assistant", avatar='👩'):
-        st.markdown(initial_message.format(podcasts="\n".join([d['name'] for d in raw_podcast_list])))
+    print("--- entire_process: %s seconds ---" % (time.time() - start_time))
     
+# Testeos
 
-    # Definir la orden predeterminada para el LLM
-    template = """
-    Eres la mejor coach de mejora personal, te llamas Lucy, para personas de entre 18 y 27 años.
-    Te voy a compartir una solicitud de una de estas personas que pertenecen al público objetivo.
-    Tu te encargarás de ofrecer la mejor respuesta acorde a qué dicen las mejores coach o incluso psicólogas respecto a la temática relacionada.
-    Además tendrás que seguir cuidadosamente las siguientes TODAS las reglas de a continuación:
+# output function
+# def final_result(query):
+#     qa_result = qa_bot()
+#     response = qa_result({'query': query})
+#     return response
 
-    1/ La respuesta debe ser demasiado similar o incluso idéntica a qué dicen las expertas en el tema, 
-    esto en función de su forma de hablar, sus argumentos lógicos y cualquier otro detalle que identifiques.
+# def get_result(message):
+#     start_time = time.time()
+#     update_data(message, k=2)
+#     ingest()
+#     response = final_result(message)
+#     print(response)
+#     print("--- %s seconds ---" % (time.time() - start_time))
 
-    Debajo se encuentra la solicitud:
-    {message}
 
-    Ahora te muestro a continuación qué dicen las expertas acerca del tema, con lo cual puedas basar tu respuesta:
-    {experts}
+# # get_result('¿Cómo funcionan las emociones prohibidas en los niños?')
+# get_result('¿Qué es la inteligencia emocional?')
 
-    Además menciona que te basaste en los siguientes episodios:
-    {episodes}
-
-    Por favor, escribe cómo le responderías a esta persona que ha acudido a ti como coach:
-    """
-
-    # Set a default model
-    if "openai_model" not in st.session_state:
-        st.session_state["openai_model"] = "gpt-4"
     
-    # Initialize chat history
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-
-    # Display chat messages from history on app rerun
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-    # Accept user input
-    if prompt := st.chat_input("¿Qué tal?, cuéntame, estoy para escucharte!"):
-        if len(st.session_state.messages) > 0:
-            # Add user message to chat history
-            st.session_state.messages.append({"role": "user", "content": prompt})
-        else:
-            # Asimilar spotify search al empezar el chat
-            matched = get_matched_paragraphs(message, raw_podcast_list, k=2)
-            matched_paragraphs = hp.flatten([x['matched_paragraphs'] for x in matched])
-            titles = [x['title'] for x in matched]
-            custom_prompt = template.format(message=prompt, experts="\n".join(matched_paragraphs), episodes="\n".join(titles))
-            st.session_state.messages.append({"role": "user", "content": custom_prompt})
-        # Display user message in chat message container
-        with st.chat_message("user", avatar='🗿'):
-            st.markdown(prompt)
-        # Display assistant response in chat message container
-        with st.chat_message("assistant", avatar='👩'):
-            message_placeholder = st.empty()
-            full_response = ""
-
-        for response in openai.ChatCompletion.create(
-            model=st.session_state["openai_model"],
-            messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
-            stream=True,
-            allow_fallback=True
-        ):
-            full_response += response.choices[0].delta.get("content", "")
-            message_placeholder.markdown(full_response + "▌")
-        message_placeholder.markdown(full_response)
-        st.session_state.messages.append({"role": "assistant", "content": full_response})
-
-def test():
-    # message_embedding = get_embedding('Hola, últimamente me he sentido muy bien, crees que me pueda mantener así?')
-    # with open('message_embedding.json', 'w') as f:
-    #     json.dump({'message_embedding':message_embedding}, f)
-
-    # Empezar el chat inicial informativo del bot 
-    podcast_downloader_dir = hp.get_root_dir()
-    podcast_list_path = f'{podcast_downloader_dir}/podcast_list.json'
-
-    # Obtener los podcast disponibles
-    with open(podcast_list_path, 'r') as f:
-        raw_podcast_list = json.load(f)['podcast_list']
-
-
-    with open('message_embedding.json') as f:
-        message_embedding = json.load(f)['message_embedding']
-    matched_paragraphs = get_matched_paragraphs(raw_podcast_list, message_embedding)
-    print(matched_paragraphs)
-
-def test1():
-    podcast = Podcast('Psicologia Al Desnudo | @psi.mammoliti', 'https://anchor.fm/s/28fef6f0/podcast/rss')
-    db_instructEmbedd = hp.load_embeddings(f'{slugify(podcast.name)}')
-    retriever = db_instructEmbedd.as_retriever(search_kwargs={"k": 3})
-    docs = retriever.get_relevant_documents("Hola, últimamente me he sentido muy bien, crees que me pueda mantener así?")
-    print(docs[0].page_content)
-
-def avance(message, file_name,  **kwargs):
-    # Mensaje a ingresar el usuario 
-    message = 'A veces no se cómo sentirme cuándo no sale lo que quiero como lo quiero'
-    # Obtener los podcast disponibles
-    podcast_downloader_dir = hp.get_root_dir()
-    podcast_list_path = f'{podcast_downloader_dir}/podcast_list.json'
-    with open(podcast_list_path, 'r') as f:
-        raw_podcast_list = json.load(f)['podcast_list']
-    # Obtener 3 párrafos coincidentes por podcast
-    matched = get_matched_paragraphs(message, raw_podcast_list, **kwargs)
-    matched_paragraphs = hp.flatten([x['matched_paragraphs'] for x in matched])
-    with open(f'{file_name}.json', 'w') as f:
-        json.dump({message: matched}, f)
-          
-    print(len(matched_paragraphs))
-
-def test3():
-    path = './podcast_downloader/Embedding_store/description_embeddings/faiss_psicologia-al-desnudo-psimammoliti.pkl'
-    with open(path, "rb") as f:
-        VectorStore = pickle.load(f)
-
-if __name__ == '__main__':
-    # main()
-
-    '''
-    1. Escribir el mensaje
-    '''
-    mensaje = 'A veces no se cómo sentirme cuándo no sale lo que quiero como lo quiero'
-    # Obtener 2 párrafos coincidentes al mensaje
-    file_name = 'matched_paragraphs_ex1'
-    avance(mensaje, file_name, k=2)
-
-    with open(f'./{file_name}.json', 'r') as f:
-        matched = json.load(f)
-
-    '''
-    2. Leer el archivo json generado. Este contiene los párrafos que coinciden con el texto dado en {mensaje}
-    '''
-    ''' file_name.json 
-    {'mensaje':
-        [
-            {
-                'podcast':'nombre_del_podcast',
-                'title':'titulo_del_episodio_del_podcast',
-                'matched_paragraphs':['texto_primer_parrafo', 
-                                        'texto_segundo_parrafo',
-                                          ...,
-                                            'texto_k-ésimo párrafo']
-            },
-            {...},
-            ...,
-            {...}
-        ]
-    }
-    '''
-    print(matched[f'{mensaje}'][0]['matched_paragraphs'])
-    # test3()
+    
+    

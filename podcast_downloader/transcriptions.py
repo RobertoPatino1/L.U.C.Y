@@ -2,13 +2,14 @@ import os
 import json
 import time
 import requests
-import streamlit as st
-import sys
 
+import sys
 sys.path.append('./')
-import podcast_downloader.helpers as helpers
+
 from podcast_downloader.podcast import Podcast
 
+ASSEMBLY_AI_KEY = '8cce172a118c4125b018117ca2e6d3ec'
+base_dir = './podcast_downloader'
 
 def create_transcripts(podcast_list, **kwargs):
 	all_transcription_metadata = {}
@@ -28,7 +29,7 @@ def create_transcripts(podcast_list, **kwargs):
 	return all_transcription_metadata
 
 def upload_to_assembly_ai(file_path):
-	headers = {'authorization': st.secrets['ASSEMBLY_AI_KEY']}
+	headers = {'authorization': ASSEMBLY_AI_KEY}
 	endpoint = 'https://api.assemblyai.com/v2/upload'
 	response = requests.post(endpoint, headers=headers, data=read_file(file_path))
 	upload_url = response.json()['upload_url']
@@ -36,7 +37,7 @@ def upload_to_assembly_ai(file_path):
 
 def transcribe_podcast(url, **kwargs):
 	headers = {
-		"authorization": st.secrets['ASSEMBLY_AI_KEY'],
+		"authorization": ASSEMBLY_AI_KEY,
 	    "content-type": "application/json",
 	}
 	
@@ -81,7 +82,7 @@ def save_transcriptions_locally(podcast_list):
 				f.write(transcription['text'])
 
 def get_assembly_ai_transcript(transcription_id):
-	headers = {'authorization': st.secrets['ASSEMBLY_AI_KEY']}
+	headers = {'authorization': ASSEMBLY_AI_KEY}
 	endpoint = f'https://api.assemblyai.com/v2/transcript/{transcription_id}'
 
 	response = requests.get(endpoint, headers=headers)
@@ -117,13 +118,12 @@ if __name__ == '__main__':
 	print("\n--- Transcribing episodes... ---\n")
 
 	# Obtener el podcast_list
-	base_dir = helpers.get_root_dir()
 	podcast_list_dir = f'{base_dir}/podcast_list.json'
 	
 	raw_podcast_list = load_json(podcast_list_dir)['podcast_list']
 	podcast_list = get_podcast_list(raw_podcast_list)
 
-	metadata = create_transcripts(podcast_list, audio_start_from=600000, audio_end_at=900000, language_code="es")
+	metadata = create_transcripts(podcast_list, language_code="es")
 	print('Uploaded transcripts')
 	save_transcription_metadata(metadata)
 	save_transcriptions_locally(podcast_list)

@@ -15,7 +15,7 @@ def save_mp3_file(file, file_path):
         f.write(file.content)
 
 if __name__ == '__main__':
-    print("\n--- Downloading episodes... ---\n")
+    print("\n--- Downloading episode... ---\n")
     # Obtener metadata del episodio
     with open(f'{base_dir}/podcast_metadata.json', 'r') as f:
         episode = json.load(f)
@@ -23,12 +23,13 @@ if __name__ == '__main__':
         
     url = episode['url']
     file_path = episode['download_episode_path']
-    # Obtener el archivo de audio
-    file = get_mp3_file(url)
-    # Guardar el archivo de audio
-    save_mp3_file(file, file_path)
-    print(file_path, "saved")
-    os.remove(f'{base_dir}/podcast_metadata.json')
+    if not os.path.exists(file_path):
+        # Obtener el archivo de audio
+        file = get_mp3_file(url)
+        # Guardar el archivo de audio
+        save_mp3_file(file, file_path)
+        print(file_path, "saved")
+        os.remove(f'{base_dir}/podcast_metadata.json')
 
             
             

@@ -1,0 +1,42 @@
+PS C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4> python test.py
+Traceback (most recent call last):
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\test.py", line 1, in <module>
+    import whisper
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\whisper\__init__.py", line 13, in <module>
+    from .model import ModelDimensions, Whisper
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\whisper\model.py", line 13, in <module>
+    from .transcribe import transcribe as transcribe_function
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\whisper\transcribe.py", line 20, in <module>
+    from .timing import add_word_timestamps
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\whisper\timing.py", line 7, in <module>
+    import numba
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\numba\__init__.py", line 55, in <module>
+    _ensure_critical_deps()
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\numba\__init__.py", line 42, in _ensure_critical_deps
+    raise ImportError("Numba needs NumPy 1.24 or less")
+ImportError: Numba needs NumPy 1.24 or less
+PS C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4> python -m pip install numpy==1.24
+Collecting numpy==1.24
+  Downloading numpy-1.24.0-cp310-cp310-win_amd64.whl (14.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.8/14.8 MB 13.9 MB/s eta 0:00:00
+Installing collected packages: numpy
+  Attempting uninstall: numpy
+    Found existing installation: numpy 1.25.2
+    Uninstalling numpy-1.25.2:
+      Successfully uninstalled numpy-1.25.2
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+chex 0.1.83 requires numpy>=1.24.1, but you have numpy 1.24.0 which is incompatible.
+openai-whisper 20230314 requires tiktoken==0.3.1, but you have tiktoken 0.4.0 which is incompatible.
+Successfully installed numpy-1.24.0
+PS C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4> python test.py
+C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\whisper\timing.py:58: NumbaDeprecationWarning: The 'nopython' keyword argument was not supplied to the 'numba.jit' decorator. The implicit default value for this argument is currently False, but it will be changed to True in Numba 0.59.0. See https://numba.readthedocs.io/en/stable/reference/deprecation.html#deprecation-of-object-mode-fall-back-behaviour-when-using-jit for details.       
+  def backtrace(trace: np.ndarray):
+C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\whisper\transcribe.py:114: UserWarning: FP16 is not supported on CPU; using FP32 instead
+  warnings.warn("FP16 is not supported on CPU; using FP32 instead")
+PS C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4> python test.py
+C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\whisper\timing.py:58: NumbaDeprecationWarning: The 'nopython' keyword argument was not supplied to the 'numba.jit' decorator. The implicit default value for this argument is currently False, but it will be changed to True in Numba 0.59.0. See https://numba.readthedocs.io/en/stable/reference/deprecation.html#deprecation-of-object-mode-fall-back-behaviour-when-using-jit for details.       
+  def backtrace(trace: np.ndarray):
+C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\whisper\transcribe.py:114: UserWarning: FP16 is not supported on CPU; using FP32 instead
+  warnings.warn("FP16 is not supported on CPU; using FP32 instead")
+--- 1494.3075263500214 seconds ---
+PS C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4> 

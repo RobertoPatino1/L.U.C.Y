@@ -1,0 +1,771 @@
+    with open(self.file_path, encoding=self.encoding) as f:
+FileNotFoundError: [Errno 2] No such file or directory: './podcast_downloader/transcripts/confidentiel/lentretien-donald-trump-une-vraie-possibilite-de-le-revoir-en-2024-dit-jerome-cartillier.txt'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\chainlit\utils.py", line 40, in wrapper
+    return await user_function(**params_values)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 215, in main
+    await update_data(message, k=2)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 100, in update_data
+    podcast.update_paragraph_embeddings(title, url)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\podcast_downloader\podcast.py", line 125, in update_paragraph_embeddings
+    documents = loader.load()
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\langchain\document_loaders\text.py", line 56, in load
+    raise RuntimeError(f"Error loading {self.file_path}") from e
+RuntimeError: Error loading ./podcast_downloader/transcripts/confidentiel/lentretien-donald-trump-une-vraie-possibilite-de-le-revoir-en-2024-dit-jerome-cartillier.txt
+2023-09-23 07:54:02 - 8 changes detected
+2023-09-23 07:57:59 - 1 change detected
+2023-09-23 07:57:59 - File modified: app.py. Reloading app...
+2023-09-23 07:58:02 - 1 change detected
+2023-09-23 07:58:02 - 1 change detected
+2023-09-23 07:58:20 - 1 change detected
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 13.89it/s] 
+Download path:  ./podcast_downloader/downloads/confidentiel/lentretien-donald-trump-une-vraie-possibilite-de-le-revoir-en-2024-dit-jerome-cartillier.mp3
+
+--- Downloading episode... ---
+
+
+--- Transcribing episodes... ---
+
+Uploading lentretien-donald-trump-une-vraie-possibilite-de-le-revoir-en-2024-dit-jerome-cartillier.mp3
+{'audio_url': 'https://cdn.assemblyai.com/upload/d6e8dc6e-4156-4561-b46c-54b1f12887b7', 'language_code': 'fr'}
+Uploaded transcripts
+Trying to save ./podcast_downloader/transcripts/confidentiel/lentretien-donald-trump-une-vraie-possibilite-de-le-revoir-en-2024-dit-jerome-cartillier.txt
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Got transcript
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:07<00:00,  2.62s/it]
+Download path:  ./podcast_downloader/downloads/confidentiel/yoko-ono-adulee-par-john-lennon-mais-detestee-par-langleterre.mp3
+
+--- Downloading episode... ---
+
+./podcast_downloader/downloads/confidentiel/yoko-ono-adulee-par-john-lennon-mais-detestee-par-langleterre.mp3 saved
+
+--- Transcribing episodes... ---
+
+Uploading yoko-ono-adulee-par-john-lennon-mais-detestee-par-langleterre.mp3
+{'audio_url': 'https://cdn.assemblyai.com/upload/bb989f26-a0db-4700-a9d5-6591c85a2f80', 'language_code': 'fr'}
+Uploaded transcripts
+Trying to save ./podcast_downloader/transcripts/confidentiel/yoko-ono-adulee-par-john-lennon-mais-detestee-par-langleterre.txt
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Got transcript
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.26it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.26it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.40it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.46it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.33it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.71it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.17it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.53it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.97it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.54it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.47it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.80it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.62it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.62it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.80it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.35it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.43it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.26it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.01it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.93it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.09it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.77it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.93it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.71it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.35it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.93it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.71it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.93it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.00it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.85it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.50it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.01it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.42it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.42it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.84it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.43it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.93it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.10it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.71it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.62it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.90it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 11.06it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.42it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 11.63it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.85it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.52it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.17it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.26it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.13it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.17it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.26it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.00it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.26it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.33it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.42it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.40it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.10it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.13it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.62it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.47it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.80it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.17it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.62it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.00it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.33it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.33it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.70it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.26it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.43it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.71it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.99it/s] 
+Fetching 1 files: 100%|████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 1005.59it/s]
+Fetching 1 files: 100%|█████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 989.46it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 18.87it/s]
+2023-09-23 08:05:25 - 16 changes detected
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\protocols\websockets\websockets_impl.py", line 247, in run_asgi
+    result = await self.app(self.scope, self.asgi_receive, self.asgi_send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 84, in __call__      
+    return await self.app(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\applications.py", line 290, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 149, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 75, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__       
+    raise exc
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__       
+    await self.app(scope, receive, sender)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__     
+    raise e
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__     
+    await self.app(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 443, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\engineio\async_drivers\asgi.py", line 58, in __call__
+    await self.engineio_server.handle_request(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\socketio\asyncio_server.py", line 398, in handle_request        
+    return await self.eio.handle_request(*args, **kwargs)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\engineio\asyncio_server.py", line 278, in handle_request        
+    socket = self._get_socket(sid)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\engineio\server.py", line 660, in _get_socket
+    raise KeyError('Session is disconnected')
+KeyError: 'Session is disconnected'
+2023-09-23 08:05:25 - 1 change detected
+--- entire_process: 422.4871447086334 seconds ---
+2023-09-23 08:07:41 - 3 changes detected
+2023-09-23 08:07:42 - 2 changes detected
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 21.29it/s] 
+Download path:  ./podcast_downloader/downloads/confidentiel/elon-musk-quand-jetais-enfant-je-me-repetais-que-je-ne-voulais-pas-rester-seul.mp3
+
+--- Downloading episode... ---
+
+./podcast_downloader/downloads/confidentiel/elon-musk-quand-jetais-enfant-je-me-repetais-que-je-ne-voulais-pas-rester-seul.mp3 saved
+
+--- Transcribing episodes... ---
+
+Uploading elon-musk-quand-jetais-enfant-je-me-repetais-que-je-ne-voulais-pas-rester-seul.mp3
+{'audio_url': 'https://cdn.assemblyai.com/upload/7a1dd9b7-e5f2-4e13-bb15-ad27e3d2b240', 'language_code': 'fr'}
+Uploaded transcripts
+Trying to save ./podcast_downloader/transcripts/confidentiel/elon-musk-quand-jetais-enfant-je-me-repetais-que-je-ne-voulais-pas-rester-seul.txt 
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Got transcript
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.21it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.12it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.85it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.01it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.63it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.44it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.43it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.06it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.40it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.53it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.01it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.35it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.09it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.70it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.55it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.80it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.33it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.09it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.40it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.35it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.47it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.26it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.26it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.64it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.09it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.33it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.26it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.88it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.71it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.52it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.26it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.01it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.99it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.90it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.35it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.09it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.70it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.35it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.01it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.35it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.99it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.62it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.55it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.93it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 11.24it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.00it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.87it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.01it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.16it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.35it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.93it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.06it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.55it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.71it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.62it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.70it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.90it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.75it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 12.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.93it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.71it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.43it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.34it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.55it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.70it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.93it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.31it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 21.58it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 22.75it/s]
+2023-09-23 08:12:57 - 10 changes detected
+2023-09-23 08:13:54 - Number of tokens (513) exceeded maximum context length (512).
+2023-09-23 08:13:54 - Number of tokens (514) exceeded maximum context length (512).
+2023-09-23 08:13:54 - Number of tokens (515) exceeded maximum context length (512).
+2023-09-23 08:13:54 - Number of tokens (516) exceeded maximum context length (512).
+2023-09-23 08:13:55 - Number of tokens (517) exceeded maximum context length (512).
+2023-09-23 08:13:55 - Number of tokens (518) exceeded maximum context length (512).
+2023-09-23 08:13:55 - Number of tokens (519) exceeded maximum context length (512).
+2023-09-23 08:13:56 - Number of tokens (520) exceeded maximum context length (512).
+2023-09-23 08:13:56 - Number of tokens (521) exceeded maximum context length (512).
+2023-09-23 08:13:56 - Number of tokens (522) exceeded maximum context length (512).
+2023-09-23 08:13:56 - Number of tokens (523) exceeded maximum context length (512).
+2023-09-23 08:13:57 - Number of tokens (524) exceeded maximum context length (512).
+2023-09-23 08:13:57 - Number of tokens (525) exceeded maximum context length (512).
+2023-09-23 08:13:57 - Number of tokens (526) exceeded maximum context length (512).
+2023-09-23 08:13:58 - Number of tokens (527) exceeded maximum context length (512).
+2023-09-23 08:13:58 - Number of tokens (528) exceeded maximum context length (512).
+2023-09-23 08:13:58 - Number of tokens (529) exceeded maximum context length (512).
+2023-09-23 08:13:58 - Number of tokens (530) exceeded maximum context length (512).
+2023-09-23 08:13:59 - Number of tokens (531) exceeded maximum context length (512).
+2023-09-23 08:13:59 - Number of tokens (532) exceeded maximum context length (512).
+2023-09-23 08:13:59 - Number of tokens (533) exceeded maximum context length (512).
+2023-09-23 08:14:00 - Number of tokens (534) exceeded maximum context length (512).
+2023-09-23 08:14:00 - Number of tokens (535) exceeded maximum context length (512).
+2023-09-23 08:14:00 - Number of tokens (536) exceeded maximum context length (512).
+2023-09-23 08:14:01 - Number of tokens (537) exceeded maximum context length (512).
+2023-09-23 08:14:01 - Number of tokens (538) exceeded maximum context length (512).
+2023-09-23 08:14:01 - Number of tokens (539) exceeded maximum context length (512).
+2023-09-23 08:14:02 - Number of tokens (540) exceeded maximum context length (512).
+2023-09-23 08:14:02 - Number of tokens (541) exceeded maximum context length (512).
+2023-09-23 08:14:03 - Number of tokens (542) exceeded maximum context length (512).
+2023-09-23 08:14:03 - Number of tokens (543) exceeded maximum context length (512).
+2023-09-23 08:14:03 - Number of tokens (544) exceeded maximum context length (512).
+2023-09-23 08:14:03 - Number of tokens (545) exceeded maximum context length (512).
+2023-09-23 08:14:04 - Number of tokens (546) exceeded maximum context length (512).
+2023-09-23 08:14:04 - Number of tokens (547) exceeded maximum context length (512).
+2023-09-23 08:14:04 - Number of tokens (548) exceeded maximum context length (512).
+2023-09-23 08:14:05 - Number of tokens (549) exceeded maximum context length (512).
+2023-09-23 08:14:05 - Number of tokens (550) exceeded maximum context length (512).
+2023-09-23 08:14:06 - Number of tokens (551) exceeded maximum context length (512).
+2023-09-23 08:14:06 - Number of tokens (552) exceeded maximum context length (512).
+2023-09-23 08:14:06 - Number of tokens (553) exceeded maximum context length (512).
+2023-09-23 08:14:06 - Number of tokens (554) exceeded maximum context length (512).
+2023-09-23 08:14:07 - Number of tokens (555) exceeded maximum context length (512).
+2023-09-23 08:14:07 - Number of tokens (556) exceeded maximum context length (512).
+2023-09-23 08:14:07 - Number of tokens (557) exceeded maximum context length (512).
+2023-09-23 08:14:08 - Number of tokens (558) exceeded maximum context length (512).
+2023-09-23 08:14:08 - Number of tokens (559) exceeded maximum context length (512).
+2023-09-23 08:14:08 - Number of tokens (560) exceeded maximum context length (512).
+2023-09-23 08:14:08 - Number of tokens (561) exceeded maximum context length (512).
+2023-09-23 08:14:09 - Number of tokens (562) exceeded maximum context length (512).
+2023-09-23 08:14:09 - Number of tokens (563) exceeded maximum context length (512).
+2023-09-23 08:14:09 - Number of tokens (564) exceeded maximum context length (512).
+2023-09-23 08:14:10 - Number of tokens (565) exceeded maximum context length (512).
+2023-09-23 08:14:10 - Number of tokens (566) exceeded maximum context length (512).
+2023-09-23 08:14:10 - Number of tokens (567) exceeded maximum context length (512).
+2023-09-23 08:14:10 - Number of tokens (568) exceeded maximum context length (512).
+2023-09-23 08:14:11 - Number of tokens (569) exceeded maximum context length (512).
+2023-09-23 08:14:11 - Number of tokens (570) exceeded maximum context length (512).
+2023-09-23 08:14:11 - Number of tokens (571) exceeded maximum context length (512).
+2023-09-23 08:14:11 - Number of tokens (572) exceeded maximum context length (512).
+2023-09-23 08:14:12 - Number of tokens (573) exceeded maximum context length (512).
+2023-09-23 08:14:12 - Number of tokens (574) exceeded maximum context length (512).
+2023-09-23 08:14:12 - Number of tokens (575) exceeded maximum context length (512).
+2023-09-23 08:14:13 - Number of tokens (576) exceeded maximum context length (512).
+2023-09-23 08:14:13 - Number of tokens (577) exceeded maximum context length (512).
+--- entire_process: 313.91835498809814 seconds ---
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 15.39it/s] 
+Download path:  ./podcast_downloader/downloads/confidentiel/carole-bouquet-jai-toujours-fait-peur.mp3
+
+--- Downloading episode... ---
+
+./podcast_downloader/downloads/confidentiel/carole-bouquet-jai-toujours-fait-peur.mp3 saved
+
+--- Transcribing episodes... ---
+
+Uploading carole-bouquet-jai-toujours-fait-peur.mp3
+{'audio_url': 'https://cdn.assemblyai.com/upload/62242c52-7165-4f5b-9e2c-2ee0cacddb9f', 'language_code': 'fr'}
+Uploaded transcripts
+Trying to save ./podcast_downloader/transcripts/confidentiel/carole-bouquet-jai-toujours-fait-peur.txt
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Got transcript
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.04it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.97it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.88it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.88it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.10it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.29it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.87it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.30it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.19it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.20it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.80it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.52it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.19it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.69it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.63it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.87it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.00it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.57it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.75it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.56it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.26it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.13it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.90it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.13it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.52it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.48it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.09it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.94it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.99it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.19it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.90it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.20it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.75it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.70it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.63it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.92it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.33it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.41it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.54it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.38it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.75it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.25it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.62it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.85it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.21it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.54it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.26it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.30it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.58it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.41it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.18it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.94it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.75it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.47it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.71it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.83it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.04it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.67it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.41it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.17it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.90it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.47it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.43it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.06it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.78it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.47it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.55it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.37it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.13it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.90it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.95it/s]
+2023-09-23 08:20:19 - 11 changes detected
+Invalid session 7InZaWF15wwzNTuYAAAf (further occurrences of this error will be logged with level INFO)
+2023-09-23 08:20:19 - Invalid session 7InZaWF15wwzNTuYAAAf (further occurrences of this error will be logged with level INFO)
+--- entire_process: 316.8943979740143 seconds ---
+2023-09-23 08:22:49 - 2 changes detected
+2023-09-23 08:22:58 - 3 changes detected
+2023-09-23 08:23:02 - 3 changes detected
+2023-09-23 08:23:03 - 7 changes detected
+2023-09-23 08:42:56 - 1 change detected
+2023-09-23 08:42:56 - File modified: test.py. Reloading app...
+2023-09-23 08:43:02 - 1 change detected
+2023-09-23 08:43:02 - 1 change detected
+2023-09-23 08:44:03 - 1 change detected
+2023-09-23 08:44:46 - 2 changes detected
+2023-09-23 08:45:07 - 1 change detected
+2023-09-23 08:45:07 - File modified: test.py. Reloading app...
+2023-09-23 08:45:10 - 1 change detected
+2023-09-23 08:45:10 - 1 change detected
+2023-09-23 08:46:53 - 1 change detected
+2023-09-23 08:46:53 - File modified: test.py. Reloading app...
+2023-09-23 08:46:56 - 1 change detected
+2023-09-23 08:46:56 - 1 change detected
+2023-09-23 08:55:25 - 1 change detected
+2023-09-23 08:55:25 - File modified: test.py. Reloading app...
+2023-09-23 08:55:29 - 1 change detected
+2023-09-23 08:55:29 - 1 change detected
+2023-09-23 09:20:29 - 1 change detected
+2023-09-23 09:20:29 - File modified: test.py. Reloading app...
+2023-09-23 09:20:32 - 1 change detected
+2023-09-23 09:20:32 - 1 change detected
+2023-09-23 09:25:26 - 1 change detected
+2023-09-23 09:25:26 - File modified: test.py. Reloading app...
+2023-09-23 09:25:29 - 1 change detected
+2023-09-23 09:25:29 - 1 change detected
+2023-09-23 09:26:48 - 1 change detected
+2023-09-23 09:26:48 - File modified: test.py. Reloading app...
+2023-09-23 09:26:51 - 1 change detected
+2023-09-23 09:26:51 - 1 change detected
+2023-09-23 09:27:27 - 1 change detected
+2023-09-23 09:27:27 - File modified: test.py. Reloading app...
+2023-09-23 09:27:29 - 1 change detected
+2023-09-23 09:27:29 - 1 change detected
+2023-09-23 09:27:50 - 1 change detected
+2023-09-23 09:27:50 - File modified: test.py. Reloading app...
+2023-09-23 09:27:52 - 1 change detected
+2023-09-23 09:27:53 - 1 change detected
+2023-09-23 09:35:55 - 1 change detected
+2023-09-23 09:35:55 - File modified: app.py. Reloading app...
+2023-09-23 09:35:57 - 1 change detected
+2023-09-23 09:35:57 - File modified: transcriptions.py. Reloading app...
+2023-09-23 09:35:58 - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\chainlit\utils.py", line 40, in wrapper
+    return await user_function(**params_values)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 220, in start
+    set_podcast(current_podcast)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 207, in set_podcast
+    assembly_ai_api_key = cl.user_session.get('settings')['assembly_ai_api_key']
+TypeError: 'NoneType' object is not subscriptable
+2023-09-23 09:35:58 - 1 change detected
+2023-09-23 09:35:58 - File modified: podcast.py. Reloading app...
+2023-09-23 09:35:59 - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\chainlit\utils.py", line 40, in wrapper
+    return await user_function(**params_values)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 220, in start
+    set_podcast(current_podcast)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 207, in set_podcast
+    assembly_ai_api_key = cl.user_session.get('settings')['assembly_ai_api_key']
+TypeError: 'NoneType' object is not subscriptable
+2023-09-23 09:36:00 - 1 change detected
+2023-09-23 09:36:10 - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\chainlit\utils.py", line 40, in wrapper
+    return await user_function(**params_values)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 220, in start
+    set_podcast(current_podcast)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 207, in set_podcast
+    assembly_ai_api_key = cl.user_session.get('settings')['assembly_ai_api_key']
+TypeError: 'NoneType' object is not subscriptable
+2023-09-23 09:36:18 - 1 change detected
+2023-09-23 09:36:18 - File modified: app.py. Reloading app...
+2023-09-23 09:36:20 - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\chainlit\utils.py", line 40, in wrapper
+    return await user_function(**params_values)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 220, in start
+    set_podcast(current_podcast)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 207, in set_podcast
+    assembly_ai_api_key = cl.user_session.get('settings')['assembly_ai_api_key']
+TypeError: 'NoneType' object is not subscriptable
+2023-09-23 09:37:44 - 1 change detected
+2023-09-23 09:37:44 - File modified: app.py. Reloading app...
+2023-09-23 09:37:46 - 1 change detected
+2023-09-23 09:37:46 - 1 change detected
+2023-09-23 09:38:26 - 1 change detected
+2023-09-23 09:38:26 - File modified: app.py. Reloading app...
+2023-09-23 09:38:31 - 1 change detected
+2023-09-23 09:38:31 - 1 change detected
+2023-09-23 09:39:08 - 1 change detected
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  2.00it/s]
+Download path:  ./podcast_downloader/downloads/confidentiel/george-clooney-jai-passe-ma-vie-a-etre-surveille.mp3
+
+--- Downloading episode... ---
+
+./podcast_downloader/downloads/confidentiel/george-clooney-jai-passe-ma-vie-a-etre-surveille.mp3 saved
+
+--- Transcribing episode... ---
+
+Uploading george-clooney-jai-passe-ma-vie-a-etre-surveille.mp3
+{'audio_url': 'https://cdn.assemblyai.com/upload/9b924d47-ef45-4302-ba16-a6fe326d4bee', 'language_code': 'fr'}
+Uploaded transcripts
+Trying to save ./podcast_downloader/transcripts/confidentiel/george-clooney-jai-passe-ma-vie-a-etre-surveille.txt
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Got transcript
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  2.97it/s]
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.26it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.42it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.03it/s]
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.23it/s]
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  2.98it/s]
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  2.72it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.64it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.29it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.99it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.41it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.18it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.59it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.05it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.68it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.33it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.63it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.00it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.47it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.45it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.54it/s]
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.68it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.07it/s]
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.00it/s]
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.81it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.59it/s]
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.48it/s]
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.76it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.00it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.26it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.59it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.14it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.80it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.87it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.33it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.08it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.24it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.60it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.10it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.19it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.95it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.24it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.35it/s]
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.07it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.62it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.78it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.92it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.30it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.19it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.29it/s]
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.40it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.13it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.06it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.25it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.81it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.63it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.93it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.62it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.09it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.70it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.02it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.33it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.13it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.00it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.17it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.69it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.62it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.06it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.71it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.00it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.26it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.26it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.07it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.06it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.33it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.26it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  8.06it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.09it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.44it/s] 
+2023-09-23 09:43:30 - 1 validation error for PromptTemplate
+__root__
+  Invalid prompt schema; check for mismatched or missing input parameters. 'contexte' (type=value_error)
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\chainlit\utils.py", line 40, in wrapper
+    return await user_function(**params_values)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 253, in main
+    chain = await qa_bot()
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 176, in qa_bot
+    qa_prompt = set_custom_prompt()
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 139, in set_custom_prompt
+    prompt = PromptTemplate(template=custom_prompt_template,
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\langchain\load\serializable.py", line 75, in __init__    
+    super().__init__(**kwargs)
+  File "pydantic\main.py", line 341, in pydantic.main.BaseModel.__init__
+pydantic.error_wrappers.ValidationError: 1 validation error for PromptTemplate
+__root__
+  Invalid prompt schema; check for mismatched or missing input parameters. 'contexte' (type=value_error)
+2023-09-23 09:43:31 - 10 changes detected
+2023-09-23 09:44:07 - 1 change detected
+2023-09-23 09:44:07 - File modified: app.py. Reloading app...
+2023-09-23 09:44:11 - 1 change detected
+2023-09-23 09:44:11 - 1 change detected
+2023-09-23 09:44:41 - 2 changes detected
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 25.00it/s] 
+2023-09-23 09:44:51 - 1 validation error for PromptTemplate
+__root__
+  Invalid prompt schema; check for mismatched or missing input parameters. 'demande' (type=value_error)
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\chainlit\utils.py", line 40, in wrapper
+    return await user_function(**params_values)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 253, in main
+    chain = await qa_bot()
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 176, in qa_bot
+    qa_prompt = set_custom_prompt()
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 139, in set_custom_prompt
+    prompt = PromptTemplate(template=custom_prompt_template,
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\langchain\load\serializable.py", line 75, in __init__    
+    super().__init__(**kwargs)
+  File "pydantic\main.py", line 341, in pydantic.main.BaseModel.__init__
+pydantic.error_wrappers.ValidationError: 1 validation error for PromptTemplate
+__root__
+  Invalid prompt schema; check for mismatched or missing input parameters. 'demande' (type=value_error)
+2023-09-23 09:45:00 - 1 change detected
+2023-09-23 09:45:00 - File modified: app.py. Reloading app...
+2023-09-23 09:45:03 - 1 change detected
+2023-09-23 09:45:03 - 1 change detected
+2023-09-23 09:46:16 - 1 change detected
+2023-09-23 09:46:16 - File modified: app.py. Reloading app...
+2023-09-23 09:46:19 - 1 change detected
+2023-09-23 09:46:19 - 1 change detected
+--- test with translated podcast: 0.0009930133819580078 seconds ---
+2023-09-23 09:46:55 - 1 change detected
+--- test with translated podcast: 0.001001596450805664 seconds ---
+2023-09-23 09:47:41 - 1 change detected
+2023-09-23 09:47:41 - File modified: app.py. Reloading app...
+2023-09-23 09:47:44 - 1 change detected
+2023-09-23 09:47:44 - 1 change detected
+2023-09-23 09:48:01 - 1 change detected
+--- test with translated podcast: 0.0009987354278564453 seconds ---
+2023-09-23 09:49:23 - 1 change detected
+2023-09-23 09:49:23 - File modified: app.py. Reloading app...
+2023-09-23 09:49:26 - 1 change detected
+2023-09-23 09:49:26 - 1 change detected
+--- test with translated podcast: 0.0010082721710205078 seconds ---
+--- test with translated podcast: 0.001005411148071289 seconds ---
+2023-09-23 09:50:18 - 1 change detected
+2023-09-23 09:50:18 - File modified: app.py. Reloading app...
+2023-09-23 09:50:20 - 1 change detected
+2023-09-23 09:50:20 - 1 change detected
+2023-09-23 09:50:33 - Message.send() got an unexpected keyword argument 'content'
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\chainlit\utils.py", line 40, in wrapper
+    return await user_function(**params_values)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 247, in main
+    await cl.Message(content='Enter an Assembly AI API Key').send(content=cl.user_session.get('settings')['assembly_ai_api_key'])        
+TypeError: Message.send() got an unexpected keyword argument 'content'
+2023-09-23 09:50:49 - 1 change detected
+2023-09-23 09:50:49 - File modified: app.py. Reloading app...
+2023-09-23 09:50:49 - Error reloading module: invalid syntax (app.py, line 247)
+2023-09-23 09:50:53 - 1 change detected
+2023-09-23 09:50:53 - File modified: app.py. Reloading app...
+2023-09-23 09:50:55 - 1 change detected
+2023-09-23 09:50:55 - 1 change detected
+2023-09-23 09:51:06 - Unsupported type <class 'NoneType'> for message content. Attempting to stringify it
+--- test with translated podcast: 0.0029935836791992188 seconds ---
+2023-09-23 09:53:35 - 1 change detected
+2023-09-23 09:53:35 - File modified: app.py. Reloading app...
+2023-09-23 09:53:38 - 1 change detected
+2023-09-23 09:53:38 - 1 change detected
+--- test with translated podcast: 0.0010006427764892578 seconds ---
+2023-09-23 09:54:26 - 1 change detected
+--- test with translated podcast: 0.000997781753540039 seconds ---
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+./podcast_downloader/Embedding_store/description_embeddings/faiss_confidentiel.pkl
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 22.74it/s] 
+Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 21.28it/s]
+--- test with translated podcast: 124.56118130683899 seconds ---
+2023-09-23 10:07:05 - 2 changes detected
+2023-09-23 10:07:14 - 3 changes detected
+2023-09-23 10:07:17 - 3 changes detected
+2023-09-23 10:07:18 - 7 changes detected

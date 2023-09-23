@@ -8,8 +8,11 @@ sys.path.append('./')
 
 from podcast_downloader.podcast import Podcast
 
-ASSEMBLY_AI_KEY = '8cce172a118c4125b018117ca2e6d3ec'
+with open('podcast.json', 'r') as f:
+		podcast_data = json.load(f)
+
 base_dir = './podcast_downloader'
+assembly_ai_key = podcast_data['assembly_key']
 
 def create_transcripts(podcast_list, **kwargs):
 	all_transcription_metadata = {}
@@ -29,7 +32,7 @@ def create_transcripts(podcast_list, **kwargs):
 	return all_transcription_metadata
 
 def upload_to_assembly_ai(file_path):
-	headers = {'authorization': ASSEMBLY_AI_KEY}
+	headers = {'authorization': assembly_ai_key}
 	endpoint = 'https://api.assemblyai.com/v2/upload'
 	response = requests.post(endpoint, headers=headers, data=read_file(file_path))
 	upload_url = response.json()['upload_url']
@@ -37,7 +40,7 @@ def upload_to_assembly_ai(file_path):
 
 def transcribe_podcast(url, **kwargs):
 	headers = {
-		"authorization": ASSEMBLY_AI_KEY,
+		"authorization": assembly_ai_key,
 	    "content-type": "application/json",
 	}
 	
@@ -82,19 +85,11 @@ def save_transcriptions_locally(podcast_list):
 				f.write(transcription['text'])
 
 def get_assembly_ai_transcript(transcription_id):
-	headers = {'authorization': ASSEMBLY_AI_KEY}
+	headers = {'authorization': assembly_ai_key}
 	endpoint = f'https://api.assemblyai.com/v2/transcript/{transcription_id}'
 
 	response = requests.get(endpoint, headers=headers)
 	return response
-
-def get_podcast_list(raw_podcast_list):
-	podcast_list = []
-
-	for raw_podcast in raw_podcast_list:
-		podcast_list += [Podcast(raw_podcast['name'], raw_podcast['rss_feed_url'])]
-	
-	return podcast_list
 
 def wait_and_get_assembly_ai_transcript(transcription_id):
 	while True:
@@ -115,15 +110,13 @@ def wait_and_get_assembly_ai_transcript(transcription_id):
 
 
 if __name__ == '__main__':
-	print("\n--- Transcribing episodes... ---\n")
+	print("\n--- Transcribing episode... ---\n")
 
-	# Obtener el podcast_list
-	podcast_list_dir = f'{base_dir}/podcast_list.json'
 	
-	raw_podcast_list = load_json(podcast_list_dir)['podcast_list']
-	podcast_list = get_podcast_list(raw_podcast_list)
 
-	metadata = create_transcripts(podcast_list, language_code="es")
+	podcast_list = [Podcast(podcast_data['name'], podcast_data['rss_feed_url'])]
+
+	metadata = create_transcripts(podcast_list, language_code=podcast_data['language'])
 	print('Uploaded transcripts')
 	save_transcription_metadata(metadata)
 	save_transcriptions_locally(podcast_list)

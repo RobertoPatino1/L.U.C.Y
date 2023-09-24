@@ -14,6 +14,8 @@ from langchain.vectorstores import FAISS
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
 
+from transformers import pipeline
+
 from podcast_downloader.podcast import load_embeddings
 from podcast_downloader.podcast import Podcast
 
@@ -36,16 +38,11 @@ language_codes = {
     'French': 'fr',
     'German': 'de',
     'Italian': 'it',
-    'Portuguese': 'pt',
     'Dutch': 'nl',
     'Hindi': 'hi',
-    'Japanese': 'ja',
     'Chinese': 'zh',
     'Finnish': 'fi',
-    'Korean': 'ko',
-    'Polish': 'pl',
     'Russian': 'ru',
-    'Turkish': 'tr',
     'Ukrainian': 'uk',
     'Vietnamese': 'vi'
 }
@@ -70,15 +67,15 @@ language_codes = {
 # Just return the helpful answer below and nothing more.
 # Helpful answer:"""
 
-custom_prompt_template = """
-Utilisez les informations suivantes pour répondre à la question de l'utilisateur.
-Si vous ne connaissez pas la réponse, dites simplement que vous ne la savez pas, n'essayez pas d'inventer une réponse.
+# custom_prompt_template = """
+# Utilisez les informations suivantes pour répondre à la question de l'utilisateur.
+# Si vous ne connaissez pas la réponse, dites simplement que vous ne la savez pas, n'essayez pas d'inventer une réponse.
 
-Contexte: {context}
-Demande: {question}
+# Contexte: {context}
+# Demande: {question}
 
-Renvoyez simplement la réponse utile ci-dessous et rien de plus.
-Réponse utile:"""
+# Renvoyez simplement la réponse utile ci-dessous et rien de plus.
+# Réponse utile:"""
 
 
 def get_audio(text:str, chat_id:int, speaker_id:str, api_key:str):
@@ -120,9 +117,14 @@ def get_episodes_metadata(podcast_items):
 
 
 async def update_data(message, **kwargs):
-    podcast = cl.user_session.get('podcast')
+    # Traducir mensaje
+    with open('podcast.json', 'r') as f:
+        podcast_data = json.load(f)
+    podcast = Podcast(podcast_data['name'], podcast_data['rss_feed_url'])
+
     # Actualizar description_embeddings del podcast
     podcast.update_description_embeddings()
+    
     # Obtengo la metadata de top_limit = 2 episodios con mayor similitud
     podcast_items = podcast.search_items(message, **kwargs)
     episodes_metadata = get_episodes_metadata(podcast_items)
@@ -136,7 +138,16 @@ def set_custom_prompt():
     """
     Prompt template for QA retrieval for each vectorstore
     """
-    prompt = PromptTemplate(template=custom_prompt_template,
+    with open('podcast.json', 'r') as f:
+        podcast_data = json.load(f)
+    with open('ts_prompts.json', 'r') as f:
+        ts_prompts = json.load(f)
+    
+    language = podcast_data['language']
+    ts_prompt = ts_prompts[language]
+
+
+    prompt = PromptTemplate(template=ts_prompt,
                             input_variables=['context', 'question'])
     return prompt
 
@@ -152,7 +163,7 @@ def retrieval_qa_chain(llm, prompt, db):
 
 #Loading the model
 @cl.cache
-def load_llm(open_ai_api_key:str):
+def load_llm(open_ai_api_key:str=None):
     if cl.user_session.get('settings')['Model'] == 'Llama-2-7B-Chat-GGML':
         # Load the locally downloaded model here
         llm = CTransformers(
@@ -178,82 +189,107 @@ async def qa_bot():
     qa = retrieval_qa_chain(llm, qa_prompt, db)
 
     return qa
+        
+@cl.cache
+def load_pipeline(src:str, dst:str):
+    task_name = f"translation_{src}_to_{dst}"
+    model_name = f"Helsinki-NLP/opus-mt-{src}-{dst}"
+    translator  = pipeline(task_name, model=model_name, tokenizer=model_name)
+    return translator
 
-def load_settings_widgets(current_podcast):
-    settings_widgets = [TextInput(id="assembly_ai_api_key", label="Assembly AI API Key for Transcriptions"),
-                        TextInput(id="PodcastName", 
-                      label="Podcast name",
-                      placeholder='Psicologia Al Desnudo | @psi.mammoliti',
-                      description=f'Current Podcast: {current_podcast.name}'),
-                    TextInput(id="RSS", 
-                            label="Podcast RSS Feed URL",
-                            placeholder='https://anchor.fm/s/28fef6f0/podcast/rss'),
-
-                    Switch(id="text_to_speech", label="Text to speech", initial=False),
-                    TextInput(id="eleven_labs_api_key", label="Eleven Labs API Key for Text to Speech"),
-                    
-                    Select(
-                        id="Model",
-                        label="Model",
-                        values=["Llama-2-7B-Chat-GGML", "gpt-3.5-turbo"],
-                        initial_index=0,
-                    ),
-                    TextInput(id="gpt_api_key", label="OpenAI API Key for GPT Model"),  
-                    ]   
-    return settings_widgets
-
-def set_podcast(podcast: Podcast):
-    cl.user_session.set('podcast', podcast)
-    assembly_ai_api_key = cl.user_session.get('settings')['assembly_ai_api_key']
-    with open('podcast.json', 'w') as f:
-        json.dump({'name':podcast.name, 
-                   'rss_feed_url':podcast.rss_feed_url,
-                     'language': podcast.get_ts_language(),
-                     'assembly_key': assembly_ai_api_key}, f)
-    
+def get_ts_message(message:str, src:str, dst:str):
+    if src != dst:
+        translator = load_pipeline(src, dst)
+        return translator(message)[0]["translation_text"]
+    else:
+        return message
 
 # chainlit code
 @cl.on_chat_start
 async def start():
+    # Set starting variables
+    await cl.Message(content=f'Starting with, \n Podcast: {default_podcast.name}\n Your spoken language: {list(language_codes.keys())[0]}').send()
+    await cl.Message(content='Complete the required fields on Chat Settings to start').send()
+
     cl.user_session.set('podcast', default_podcast)
-    current_podcast = cl.user_session.get('podcast')
-    settings_widgets = load_settings_widgets(current_podcast) 
-    settings = await cl.ChatSettings(settings_widgets).send()
-    cl.user_session.set('settings', settings)
-    set_podcast(current_podcast)
-    # Settings widgets list
     cl.user_session.set('audios', [])
+
+    # Set the settings tab
+    settings_widgets = [TextInput(id="assembly_ai_api_key", label="(*) Assembly AI API Key for Transcriptions"),
+                        Select(id="src", 
+                               label="Your language", 
+                               tooltip="We are in charge of identifying the language of your Google Podcast",
+                               items=language_codes),
+                        TextInput(id="PodcastName", 
+                                    label="Podcast name",
+                                    placeholder='Psicologia Al Desnudo | @psi.mammoliti',),
+                        TextInput(id="RSS", 
+                                label="Podcast RSS Feed URL",
+                                placeholder='https://anchor.fm/s/28fef6f0/podcast/rss'),
+
+                        Switch(id="text_to_speech", label="Text to speech", initial=False),
+                        TextInput(id="eleven_labs_api_key", label="Eleven Labs API Key for Text to Speech"),
+                        
+                        Select(
+                            id="Model",
+                            label="Model",
+                            values=["Llama-2-7B-Chat-GGML", "gpt-3.5-turbo"],
+                            initial_index=0,
+                        ),
+                        TextInput(id="gpt_api_key", label="OpenAI API Key for GPT Model"),  
+                        ]
+    settings = await cl.ChatSettings(settings_widgets).send() 
 
 @cl.on_settings_update
 async def setup_agent(settings):
-    podcast_name = settings['PodcastName']
-    rss = settings['RSS']
-    if podcast_name != None and rss != None and requests.get(rss).status_code == 200: 
-        set_podcast(Podcast(podcast_name, rss))
-
-    cl.user_session.set('assembly_ai_api_key', settings['assembly_ai_api_key'])
-
-    current_podcast = cl.user_session.get('podcast')
-    settings_widgets = load_settings_widgets(current_podcast) 
-    settings = await cl.ChatSettings(settings_widgets).send()
+    reverse_dict = {f'{x[1]}': f'{x[0]}' for x in language_codes.items()}
+    if settings['assembly_ai_api_key'] != None:
+        cl.user_session.set('able_to_chat', True)
+        if settings['PodcastName'] != None and settings['RSS'] != None and requests.get(settings['RSS']).status_code == 200:
+            if settings['Model'] == 'gpt-3.5-turbo' and settings['gpt_api_key'] == None: 
+                await cl.Message(content='Enter a Open API Key').send()
+            elif settings['text_to_speech'] and settings['eleven_labs_api_key'] == None:
+                await cl.Message(content='Enter a Eleven Labs API Key').send()
+            else:
+                podcast = Podcast(settings['PodcastName'], settings['RSS'])
+                src = settings["src"]
+                cl.user_session.set('podcast', podcast)
+        else:
+            podcast = cl.user_session.get('podcast')
+            src = 'en_us' 
+     
+        await cl.Message(f'Successful podcast load,\n Podcast: {podcast.name}\n Your spoken language: {reverse_dict[src]}').send()
+        with open('podcast.json', 'w') as f:
+                    json.dump({'name':podcast.name, 
+                            'rss_feed_url':podcast.rss_feed_url,
+                                'language': podcast.get_ts_language(),
+                                'assembly_key': settings['assembly_ai_api_key'],
+                                'src': src}, f)
+        cl.user_session.set('able_to_chat', True)
+    else:
+        podcast = cl.user_session.get("podcast")
+        await cl.Message(content='Enter an Assembly AI API Key').send()
+        cl.user_session.set('able_to_chat', False)
+        
+            
     cl.user_session.set('settings', settings)
+    
     
 @cl.on_message
 async def main(message, message_id):
     # Empezar temporizador
     start_time = time.time()
 
-    eleven_labs_api_key = cl.user_session.get('settings')['eleven_labs_api_key']
-    open_ai_api_key = cl.user_session.get('settings')['gpt_api_key']
+    if cl.user_session.get('able_to_chat'):
+        # Traducir mensaje
+        with open('podcast.json', 'r') as f:
+            podcast_data = json.load(f)
 
-    if cl.user_session.get('assembly_ai_api_key') == None:
-        await cl.Message(content='Enter an Assembly AI API Key').send()
-    elif cl.user_session.get('settings')['Model'] == 'gpt-3.5-turbo' and open_ai_api_key == None: 
-        await cl.Message(content='Enter a Open API Key').send()
-    elif cl.user_session.get('settings')['text_to_speech'] and eleven_labs_api_key == None:
-        await cl.Message(content='Enter a Eleven Labs API Key').send()
-    else:
-        await update_data(message, k=2)
+        src = "en" if podcast_data['src'] == "en_us" else podcast_data['src']
+        dst = "en" if podcast_data['language'] == "en_us" else podcast_data['language']
+
+        ts_message = get_ts_message(message, src, dst)
+        await update_data(ts_message, k=2)
         chain = await qa_bot()
         msg = cl.Message(content="Getting data...")
         await msg.send()
@@ -262,14 +298,15 @@ async def main(message, message_id):
             stream_final_answer=True, answer_prefix_tokens=["FINAL", "ANSWER"]
         )
         cb.answer_reached = True
-        res = await chain.acall(message, callbacks=[cb])
+        res = await chain.acall(ts_message, callbacks=[cb])
         # Obtener respuesta del LLM
         answer = res["result"] 
-        # await cl.Message(content=answer).send()
+        ts_answer = get_ts_message(answer, dst, src)
+        await cl.Message(content=ts_answer).send()
         sources = res["source_documents"]
 
         if cl.user_session.get('settings')['text_to_speech']:
-            output_path = get_audio(answer, message_id, speaker_id, eleven_labs_api_key)
+            output_path = get_audio(ts_answer, message_id, speaker_id, cl.user_session.get('settings')['eleven_labs_api_key'])
             cl.user_session.get('audios').append(cl.Audio(path=output_path, display='inline'))
             audios = cl.user_session.get('audios')
             await cl.Message(
@@ -284,56 +321,99 @@ async def main(message, message_id):
             
         await cl.Message(content=src_message).send()
 
-    print("--- test with translated podcast: %s seconds ---" % (time.time() - start_time))
+    else:
+        await cl.Message(content='Complete the required fields on Chat Settings').send()
+    print("--- %s seconds ---" % (time.time() - start_time))
     
-# Testeos
-podcast = Podcast('Confidentiel','https://www.rtl.fr/podcast/confidentiel.xml')
-# output function
-def update_data(message, **kwargs):
+# # Testeos
+# from functools import cache
+# @cache
+# def load_pipeline(src:str, dst:str):
+#     task_name = f"translation_{src}_to_{dst}"
+#     model_name = f"Helsinki-NLP/opus-mt-{src}-{dst}"
+#     translator  = pipeline(task_name, model=model_name, tokenizer=model_name)
+#     return translator
+
+# @cache
+# def load_llm():
+#     llm = CTransformers(
+#         model = "TheBloke/Llama-2-7B-Chat-GGML",
+#         model_type="llama",
+#         max_new_tokens = 512,
+#         temperature = 0.5
+#     )
     
-    # Actualizar description_embeddings del podcast
-    podcast.update_description_embeddings()
-    # Obtengo la metadata de top_limit = 2 episodios con mayor similitud
-    podcast_items = podcast.search_items(message, **kwargs)
-    episodes_metadata = get_episodes_metadata(podcast_items)
-    for episode in episodes_metadata:
-        url, title = episode
-        # Actualizar paragraph_embbeddings
-        podcast.update_paragraph_embeddings(title, url)
+#     return llm
 
-def qa_bot():
-    embeddings = load_embeddings()
-    db = FAISS.load_local(podcast.db_faiss_path, embeddings)
-    llm = load_llm()
-    qa_prompt = set_custom_prompt()
+# def get_ts_message(message:str, src:str, dst:str):
+#     if src != dst:
+#         translator = load_pipeline(src, dst)
+#         return translator(message)[0]["translation_text"]
+#     else:
+#         return message
+
+# podcast = Podcast('Confidentiel','https://www.rtl.fr/podcast/confidentiel.xml')
+# # output function
+# def update_data(message, **kwargs):
+#     # Traducir mensaje
+#     with open('podcast.json', 'r') as f:
+#         podcast_data = json.load(f)
+
+#     src = podcast_data['src']
+#     dst = podcast_data['language']
+
+#     ts_message = get_ts_message(message, src, dst)
+#     # Actualizar description_embeddings del podcast
+#     podcast.update_description_embeddings() 
+#     # Obtengo la metadata de top_limit = 2 episodios con mayor similitud
+#     podcast_items = podcast.search_items(ts_message, **kwargs)
+#     episodes_metadata = get_episodes_metadata(podcast_items)
+#     for episode in episodes_metadata:
+#         url, title = episode
+#         # Actualizar paragraph_embbeddings
+#         podcast.update_paragraph_embeddings(title, url)
+
+# def qa_bot():
+#     embeddings = load_embeddings()
+#     db = FAISS.load_local(podcast.db_faiss_path, embeddings)
+#     llm = load_llm()
+#     qa_prompt = set_custom_prompt()
     
-    qa = retrieval_qa_chain(llm, qa_prompt, db)
+#     qa = retrieval_qa_chain(llm, qa_prompt, db)
 
-    return qa
+#     return qa
 
-def final_result(query):
-    qa_result = qa_bot()
-    response = qa_result({'query': query})
-    return response
+# def final_result(query):
+#     # Traducir mensaje
+#     with open('podcast.json', 'r') as f:
+#         podcast_data = json.load(f)
+
+#     src = podcast_data['src']
+#     dst = podcast_data['language']
+
+#     ts_message = get_ts_message(query, src, dst)
+    
+#     qa_result = qa_bot()
+#     response = qa_result({'query': ts_message})
+#     response['result'] = get_ts_message(response['result'], dst, src)
+
+#     return response
+
+# # def get_result(message):
+# #     start_time = time.time()
+# #     update_data(message, k=2)
+# #     if not openai_use:
+# #         response = final_result(message)
+# #     else:
+# #         with get_openai_callback() as cb:
+# #             response = final_result(message)
+# #         print(cb)
+# #     print(response)
 
 # def get_result(message):
-#     start_time = time.time()
-#     update_data(message, k=2)
-#     if not openai_use:
-#         response = final_result(message)
-#     else:
-#         with get_openai_callback() as cb:
-#             response = final_result(message)
-#         print(cb)
-#     print(response)
-
-def get_result(message):
-    start_time = time.time()
-    update_data(message, k=2)
-    response = final_result(message)
-    print(response)
-
-    print(f"{podcast.name} test" + "--- %s seconds ---" % (time.time() - start_time))
+#     # update_data(message, k=2)
+#     response = final_result(message)
+#     return response
 
 
     

@@ -14,10 +14,9 @@ from langchain.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
+import re
 
 from functools import cache
-
-import re
 
 DATA_PATH = './podcast_downloader/transcripts'
 
@@ -26,6 +25,7 @@ def load_embeddings():
     embeddings = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-small",
                                        model_kwargs={'device': 'cpu'})
     return embeddings
+
 
 embeddings = load_embeddings()
 base_dir = './podcast_downloader'
@@ -85,7 +85,6 @@ class Podcast:
             description = self.get_cleaned_description(item)
             if description not in db_descriptions:
                 to_add += [description]
-                print(f'added:{description}')
 
         if len(to_add) > 0:
             # Agregar description embedding 
@@ -148,8 +147,7 @@ class Podcast:
     
     def get_ts_language(self):
         language = self.get_language()
-        ts_language = convert_language_variable(language)
-        return ts_language
+        return convert_language_variable(language)
 
 # Embeddings methods
 def update_embeddings(texts_to_add:list, store_name:str, path:str, embeddings:HuggingFaceEmbeddings, host_documents:bool):
@@ -173,7 +171,6 @@ def update_embeddings(texts_to_add:list, store_name:str, path:str, embeddings:Hu
 
 def get_embeddings(store_name:str, path:str, embeddings:HuggingFaceEmbeddings, **kwargs):
     embeddings_path = f"{path}/faiss_{store_name}.pkl"
-    print(embeddings_path)
     if not os.path.exists(embeddings_path):
         if not kwargs['host_documents']:
             texts = ['']
@@ -212,29 +209,14 @@ def convert_language_variable(language_variable):
     # Intenta hacer el reemplazo
     match = re.match(pattern, language_variable)
 
+    value = None
     if match:
         # Si hay coincidencia con el patrón, toma la parte correspondiente del idioma
         if match.group(1):
-            return 'en_us'
+            value =  'en_us'
         elif match.group(2):
-            return match.group(2)
+            value = match.group(2)
     else:
-        return language_variable
+        value = language_variable
 
-
-    
-    
-            
-
-
-
-
-
-        
-
-    
-    
-    
-
-            
-        
+    return value

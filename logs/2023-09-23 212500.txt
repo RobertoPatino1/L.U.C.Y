@@ -1,0 +1,257 @@
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 10.87it/s] 
+Download path:  ./podcast_downloader/downloads/ted-talks-daily/are-we-the-last-generation-or-the-first-sustainable-one-hannah-ritchie.mp3
+
+--- Downloading episode... ---
+
+./podcast_downloader/downloads/ted-talks-daily/are-we-the-last-generation-or-the-first-sustainable-one-hannah-ritchie.mp3 saved
+
+--- Transcribing episode... ---
+
+Uploading are-we-the-last-generation-or-the-first-sustainable-one-hannah-ritchie.mp3
+{'audio_url': 'https://cdn.assemblyai.com/upload/35e2a1de-5b46-4ff9-acd1-7c7e3a16e41f', 'language_code': 'en_us'}
+Uploaded transcripts
+Trying to save ./podcast_downloader/transcripts/ted-talks-daily/are-we-the-last-generation-or-the-first-sustainable-one-hannah-ritchie.txt      
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Transcript not available, trying again in 10 seconds...
+Got transcript
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:05<00:00,  2.75s/it]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 29.41it/s]
+2023-09-23 18:46:33 - 13 changes detected
+--- 242.03073287010193 seconds ---
+2023-09-23 18:48:17 - 5 changes detected
+2023-09-23 18:57:05 - 1 change detected
+Downloading (…)lve/main/config.json: 100%|████████████████████████████████████████████████████████████████████████| 1.38k/1.38k [00:00<?, ?B/s]
+Downloading pytorch_model.bin: 100%|████████████████████████████████████████████████████████████████████████| 344M/344M [00:08<00:00, 39.3MB/s]
+Downloading (…)neration_config.json: 100%|█████████████████████████████████████████████████████████████████████| 293/293 [00:00<00:00, 296kB/s]
+Downloading (…)okenizer_config.json: 100%|██████████████████████████████████████████████████████████████████| 42.0/42.0 [00:00<00:00, 42.1kB/s]
+Downloading (…)olve/main/source.spm: 100%|██████████████████████████████████████████████████████████████████| 814k/814k [00:00<00:00, 7.75MB/s]
+Downloading (…)olve/main/target.spm: 100%|██████████████████████████████████████████████████████████████████| 790k/790k [00:00<00:00, 9.99MB/s]
+Downloading (…)olve/main/vocab.json: 100%|████████████████████████████████████████████████████████████████| 2.37M/2.37M [00:00<00:00, 5.75MB/s]
+./podcast_downloader/Embedding_store/description_embeddings/faiss_ted-talks-daily.pkl
+./podcast_downloader/Embedding_store/description_embeddings/faiss_ted-talks-daily.pkl
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.24it/s] 
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 24.39it/s]
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\protocols\websockets\websockets_impl.py", line 247, in run_asgi
+    result = await self.app(self.scope, self.asgi_receive, self.asgi_send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 84, in __call__      
+    return await self.app(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\applications.py", line 290, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\applications.py", line 122, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 149, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 75, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\exceptions.py", line 79, in __call__       
+    raise exc
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__       
+    await self.app(scope, receive, sender)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__     
+    raise e
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__     
+    await self.app(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 443, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\engineio\async_drivers\asgi.py", line 58, in __call__
+    await self.engineio_server.handle_request(scope, receive, send)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\engineio\asyncio_server.py", line 278, in handle_request
+    socket = self._get_socket(sid)
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\engineio\server.py", line 660, in _get_socket
+    raise KeyError('Session is disconnected')
+KeyError: 'Session is disconnected'
+--- 128.33880472183228 seconds ---
+2023-09-23 19:00:26 - 3 changes detected
+2023-09-23 19:00:27 - 1 change detected
+2023-09-23 19:02:31 - 2 changes detected
+2023-09-23 19:02:37 - 3 changes detected
+2023-09-23 19:02:43 - 3 changes detected
+2023-09-23 19:02:44 - 7 changes detected
+2023-09-23 19:03:09 - 1 change detected
+2023-09-23 19:03:09 - File modified: podcast.py. Reloading app...
+
+ *  History restored 
+
+PS C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4> chainlit run app.py -w
+2023-09-23 20:44:45 - Load pretrained SentenceTransformer: intfloat/multilingual-e5-small
+2023-09-23 20:44:50 - Your app is available at http://localhost:8000
+2023-09-23 20:45:00 - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\chainlit\utils.py", line 40, in wrapper
+    return await user_function(**params_values)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 311, in main
+    if cl.user_session.get('settings')['text_to_speech']:
+TypeError: 'NoneType' object is not subscriptable
+--- 1.4505445957183838 seconds ---
+2023-09-23 20:46:18 - 1 change detected
+2023-09-23 20:46:29 - 1 change detected
+2023-09-23 20:58:52 - 1 change detected
+2023-09-23 20:58:52 - File modified: app.py. Reloading app...
+2023-09-23 20:58:54 - 1 change detected
+2023-09-23 20:58:54 - 1 change detected
+C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\transformers\models\marian\tokenization_marian.py:194: UserWarning: Recommended: pip install sacremoses.
+  warnings.warn("Recommended: pip install sacremoses.")
+2023-09-23 20:59:27 - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\chainlit\utils.py", line 40, in wrapper
+    return await user_function(**params_values)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 301, in main
+    chain = await qa_bot()
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 182, in qa_bot
+    openai_api_key = cl.user_session.get('settings')['gpt_api_key']
+TypeError: 'NoneType' object is not subscriptable
+2023-09-23 21:02:07 - 1 change detected
+2023-09-23 21:02:07 - File modified: app.py. Reloading app...
+2023-09-23 21:02:10 - 1 change detected
+2023-09-23 21:02:10 - 1 change detected
+2023-09-23 21:02:45 - Loading faiss with AVX2 support.
+2023-09-23 21:02:45 - Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2023-09-23 21:02:45 - Loading faiss.
+2023-09-23 21:02:45 - Successfully loaded faiss.
+Fetching 1 files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<?, ?it/s]
+Fetching 1 files: 100%|█████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 503.22it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  9.66it/s]
+2023-09-23 21:04:59 - Number of tokens (513) exceeded maximum context length (512).
+2023-09-23 21:04:59 - Number of tokens (514) exceeded maximum context length (512).
+2023-09-23 21:04:59 - Number of tokens (515) exceeded maximum context length (512).
+2023-09-23 21:04:59 - Number of tokens (516) exceeded maximum context length (512).
+2023-09-23 21:05:00 - Number of tokens (517) exceeded maximum context length (512).
+2023-09-23 21:05:00 - Number of tokens (518) exceeded maximum context length (512).
+2023-09-23 21:05:00 - Number of tokens (519) exceeded maximum context length (512).
+2023-09-23 21:05:01 - Number of tokens (520) exceeded maximum context length (512).
+2023-09-23 21:05:01 - Number of tokens (521) exceeded maximum context length (512).
+2023-09-23 21:05:01 - Number of tokens (522) exceeded maximum context length (512).
+2023-09-23 21:05:02 - Number of tokens (523) exceeded maximum context length (512).
+2023-09-23 21:05:02 - Number of tokens (524) exceeded maximum context length (512).
+2023-09-23 21:05:02 - Number of tokens (525) exceeded maximum context length (512).
+2023-09-23 21:05:02 - Number of tokens (526) exceeded maximum context length (512).
+2023-09-23 21:05:03 - Number of tokens (527) exceeded maximum context length (512).
+2023-09-23 21:05:03 - Number of tokens (528) exceeded maximum context length (512).
+2023-09-23 21:05:03 - Number of tokens (529) exceeded maximum context length (512).
+2023-09-23 21:05:04 - Number of tokens (530) exceeded maximum context length (512).
+2023-09-23 21:05:04 - Number of tokens (531) exceeded maximum context length (512).
+2023-09-23 21:05:04 - Number of tokens (532) exceeded maximum context length (512).
+2023-09-23 21:05:04 - Number of tokens (533) exceeded maximum context length (512).
+2023-09-23 21:05:05 - Number of tokens (534) exceeded maximum context length (512).
+2023-09-23 21:05:05 - Number of tokens (535) exceeded maximum context length (512).
+2023-09-23 21:05:05 - Number of tokens (536) exceeded maximum context length (512).
+2023-09-23 21:05:05 - Number of tokens (537) exceeded maximum context length (512).
+2023-09-23 21:05:06 - Number of tokens (538) exceeded maximum context length (512).
+2023-09-23 21:05:06 - Number of tokens (539) exceeded maximum context length (512).
+2023-09-23 21:05:06 - Number of tokens (540) exceeded maximum context length (512).
+2023-09-23 21:05:07 - Number of tokens (541) exceeded maximum context length (512).
+2023-09-23 21:05:07 - Number of tokens (542) exceeded maximum context length (512).
+2023-09-23 21:05:07 - Number of tokens (543) exceeded maximum context length (512).
+2023-09-23 21:05:07 - Number of tokens (544) exceeded maximum context length (512).
+2023-09-23 21:05:08 - Number of tokens (545) exceeded maximum context length (512).
+2023-09-23 21:05:08 - Number of tokens (546) exceeded maximum context length (512).
+2023-09-23 21:05:08 - Number of tokens (547) exceeded maximum context length (512).
+2023-09-23 21:05:08 - Number of tokens (548) exceeded maximum context length (512).
+2023-09-23 21:05:09 - Number of tokens (549) exceeded maximum context length (512).
+2023-09-23 21:05:09 - Number of tokens (550) exceeded maximum context length (512).
+2023-09-23 21:05:09 - Number of tokens (551) exceeded maximum context length (512).
+2023-09-23 21:05:09 - Number of tokens (552) exceeded maximum context length (512).
+2023-09-23 21:05:10 - Number of tokens (553) exceeded maximum context length (512).
+2023-09-23 21:05:10 - Number of tokens (554) exceeded maximum context length (512).
+2023-09-23 21:05:10 - Number of tokens (555) exceeded maximum context length (512).
+2023-09-23 21:05:11 - Number of tokens (556) exceeded maximum context length (512).
+2023-09-23 21:05:11 - Number of tokens (557) exceeded maximum context length (512).
+2023-09-23 21:05:11 - Number of tokens (558) exceeded maximum context length (512).
+2023-09-23 21:05:11 - Number of tokens (559) exceeded maximum context length (512).
+2023-09-23 21:05:12 - Number of tokens (560) exceeded maximum context length (512).
+2023-09-23 21:05:12 - Number of tokens (561) exceeded maximum context length (512).
+2023-09-23 21:05:12 - Number of tokens (562) exceeded maximum context length (512).
+2023-09-23 21:05:12 - Number of tokens (563) exceeded maximum context length (512).
+2023-09-23 21:05:13 - Number of tokens (564) exceeded maximum context length (512).
+2023-09-23 21:05:13 - Number of tokens (565) exceeded maximum context length (512).
+2023-09-23 21:05:13 - Number of tokens (566) exceeded maximum context length (512).
+2023-09-23 21:05:14 - Number of tokens (567) exceeded maximum context length (512).
+2023-09-23 21:05:14 - Number of tokens (568) exceeded maximum context length (512).
+2023-09-23 21:05:14 - Number of tokens (569) exceeded maximum context length (512).
+2023-09-23 21:05:15 - Number of tokens (570) exceeded maximum context length (512).
+2023-09-23 21:05:15 - Number of tokens (571) exceeded maximum context length (512).
+2023-09-23 21:05:15 - Number of tokens (572) exceeded maximum context length (512).
+2023-09-23 21:05:15 - Number of tokens (573) exceeded maximum context length (512).
+2023-09-23 21:05:16 - Number of tokens (574) exceeded maximum context length (512).
+2023-09-23 21:05:16 - Number of tokens (575) exceeded maximum context length (512).
+2023-09-23 21:05:16 - Number of tokens (576) exceeded maximum context length (512).
+2023-09-23 21:05:17 - Number of tokens (577) exceeded maximum context length (512).
+2023-09-23 21:05:17 - Number of tokens (578) exceeded maximum context length (512).
+2023-09-23 21:05:17 - Number of tokens (579) exceeded maximum context length (512).
+2023-09-23 21:05:17 - Number of tokens (580) exceeded maximum context length (512).
+2023-09-23 21:05:18 - Number of tokens (581) exceeded maximum context length (512).
+2023-09-23 21:05:18 - Number of tokens (582) exceeded maximum context length (512).
+2023-09-23 21:05:18 - Number of tokens (583) exceeded maximum context length (512).
+2023-09-23 21:05:19 - Number of tokens (584) exceeded maximum context length (512).
+2023-09-23 21:05:19 - Number of tokens (585) exceeded maximum context length (512).
+2023-09-23 21:05:19 - Number of tokens (586) exceeded maximum context length (512).
+2023-09-23 21:05:19 - Number of tokens (587) exceeded maximum context length (512).
+2023-09-23 21:05:20 - Number of tokens (588) exceeded maximum context length (512).
+2023-09-23 21:05:20 - Number of tokens (589) exceeded maximum context length (512).
+2023-09-23 21:05:20 - Number of tokens (590) exceeded maximum context length (512).
+2023-09-23 21:05:21 - Number of tokens (591) exceeded maximum context length (512).
+2023-09-23 21:05:21 - Number of tokens (592) exceeded maximum context length (512).
+2023-09-23 21:05:21 - Number of tokens (593) exceeded maximum context length (512).
+2023-09-23 21:05:21 - Number of tokens (594) exceeded maximum context length (512).
+2023-09-23 21:05:22 - Number of tokens (595) exceeded maximum context length (512).
+2023-09-23 21:05:22 - Number of tokens (596) exceeded maximum context length (512).
+2023-09-23 21:05:22 - Number of tokens (597) exceeded maximum context length (512).
+2023-09-23 21:05:23 - Number of tokens (598) exceeded maximum context length (512).
+2023-09-23 21:05:23 - Number of tokens (599) exceeded maximum context length (512).
+2023-09-23 21:05:23 - Number of tokens (600) exceeded maximum context length (512).
+2023-09-23 21:05:24 - Number of tokens (601) exceeded maximum context length (512).
+2023-09-23 21:05:24 - Number of tokens (602) exceeded maximum context length (512).
+2023-09-23 21:05:24 - Number of tokens (603) exceeded maximum context length (512).
+2023-09-23 21:05:24 - Number of tokens (604) exceeded maximum context length (512).
+2023-09-23 21:05:25 - Number of tokens (605) exceeded maximum context length (512).
+2023-09-23 21:05:25 - Number of tokens (606) exceeded maximum context length (512).
+2023-09-23 21:05:25 - Number of tokens (607) exceeded maximum context length (512).
+2023-09-23 21:05:26 - Number of tokens (608) exceeded maximum context length (512).
+2023-09-23 21:05:26 - Number of tokens (609) exceeded maximum context length (512).
+2023-09-23 21:05:26 - Number of tokens (610) exceeded maximum context length (512).
+2023-09-23 21:05:26 - Number of tokens (611) exceeded maximum context length (512).
+2023-09-23 21:05:27 - Number of tokens (612) exceeded maximum context length (512).
+--- 230.04573440551758 seconds ---
+2023-09-23 21:06:35 - 1 change detected
+2023-09-23 21:06:38 - 1 change detected
+2023-09-23 21:10:34 - 1 change detected
+2023-09-23 21:10:34 - File modified: app.py. Reloading app...
+2023-09-23 21:10:36 - 1 change detected
+2023-09-23 21:10:37 - 1 change detected
+2023-09-23 21:11:45 - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\Omen\AppData\Local\Programs\Python\Python310\lib\site-packages\chainlit\utils.py", line 40, in wrapper
+    return await user_function(**params_values)
+  File "C:\Users\Omen\Desktop\Proyecto_PreTAWS_G4\app.py", line 325, in main
+    if cl.user_session.get('settings')['text_to_speech']:
+TypeError: 'NoneType' object is not subscriptable
+2023-09-23 21:12:43 - 1 change detected
+2023-09-23 21:12:43 - File modified: app.py. Reloading app...
+2023-09-23 21:12:46 - 1 change detected
+2023-09-23 21:12:46 - 1 change detected
+--- 61.56480002403259 seconds ---
+2023-09-23 21:14:04 - 1 change detected
+2023-09-23 21:14:05 - 1 change detected
+2023-09-23 21:17:31 - 1 change detected
+2023-09-23 21:17:31 - File modified: app.py. Reloading app...
+2023-09-23 21:17:34 - 1 change detected
+2023-09-23 21:17:35 - 1 change detected
+--- 61.66721534729004 seconds ---
+2023-09-23 21:18:52 - 1 change detected
+2023-09-23 21:18:52 - 1 change detected
+2023-09-23 21:22:07 - 1 change detected
+2023-09-23 21:22:07 - File modified: app.py. Reloading app...
+2023-09-23 21:22:10 - 1 change detected
+2023-09-23 21:22:10 - 1 change detected
+--- 60.03645062446594 seconds ---
+2023-09-23 21:24:50 - 1 change detected
+2023-09-23 21:24:50 - File modified: app.py. Reloading app...

@@ -14,13 +14,11 @@ from langchain.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
+import re
 
 from functools import cache
 
-
-DB_FAISS_PATH = 'vectorstore/db_faiss'
 DATA_PATH = './podcast_downloader/transcripts'
-DESCRIPTIONS_PATH = './podcast_downloader/descriptions_vectorstore/db_faiss'
 
 @cache
 def load_embeddings():
@@ -28,11 +26,12 @@ def load_embeddings():
                                        model_kwargs={'device': 'cpu'})
     return embeddings
 
+
 embeddings = load_embeddings()
 base_dir = './podcast_downloader'
 
 class Podcast:
-    def __init__(self, name, rss_feed_url):
+    def __init__(self, name:str, rss_feed_url:str):
         # Definir atributos de clase
         self.name = name
         self.rss_feed_url = rss_feed_url
@@ -40,6 +39,8 @@ class Podcast:
         # Definir directorios de clase)
         self.download_directory = f'{base_dir}/downloads/{slugify(name)}'
         self.transcription_directory = f'{base_dir}/transcripts/{slugify(name)}'
+
+        self.db_faiss_path = f'vectorstore/db_faiss/{slugify(name)}'
 
     
         # Crear directorios de clase
@@ -70,9 +71,6 @@ class Podcast:
         return matched_podcasts
     
     def update_description_embeddings(self):
-        '''
-        Actualizar description_embeddings del podcast con un máximo de items_limit 
-        '''
         # Obtener episodios del podcast
         items = self.get_items()
         
@@ -87,7 +85,6 @@ class Podcast:
             description = self.get_cleaned_description(item)
             if description not in db_descriptions:
                 to_add += [description]
-                print(f'added:{description}')
 
         if len(to_add) > 0:
             # Agregar description embedding 
@@ -110,17 +107,19 @@ class Podcast:
                 doc.metadata['podcast'] = self.name
                 doc.metadata['episode'] = title
             
-            if not os.path.exists(DB_FAISS_PATH):
+            if not os.path.exists(self.db_faiss_path):
                 db = FAISS.from_documents(docs, embeddings)
             else:
-                db =  FAISS.load_local(DB_FAISS_PATH, embeddings)
+                db =  FAISS.load_local(self.db_faiss_path, embeddings)
                 db.add_documents(documents=docs)
                  
-            db.save_local(DB_FAISS_PATH)
+            db.save_local(self.db_faiss_path)
 
     def generate_transcript(self, episode_path, url):
+        # Obtener el path del transcript
         download_episode_path = f'{self.download_directory}/{episode_path}.mp3'
         print("Download path: ", download_episode_path)
+        # Post de la metadata del podcast a obtener el transcript
         episode_metadata_json = {'url': url, 'download_episode_path': download_episode_path}
         with open(f'{base_dir}/podcast_metadata.json', 'w') as f:
             json.dump(episode_metadata_json, f)
@@ -140,6 +139,15 @@ class Podcast:
         bs_description = BeautifulSoup(raw_description, 'html.parser')
         description = "\n".join([p.get_text(strip=True) for p in bs_description.find_all('p')])
         return description
+    
+    def get_language(self):
+        page = requests.get(self.rss_feed_url)
+        soup = BeautifulSoup(page.text, 'xml')
+        return soup.find('language').text
+    
+    def get_ts_language(self):
+        language = self.get_language()
+        return convert_language_variable(language)
 
 # Embeddings methods
 def update_embeddings(texts_to_add:list, store_name:str, path:str, embeddings:HuggingFaceEmbeddings, host_documents:bool):
@@ -163,7 +171,6 @@ def update_embeddings(texts_to_add:list, store_name:str, path:str, embeddings:Hu
 
 def get_embeddings(store_name:str, path:str, embeddings:HuggingFaceEmbeddings, **kwargs):
     embeddings_path = f"{path}/faiss_{store_name}.pkl"
-    print(embeddings_path)
     if not os.path.exists(embeddings_path):
         if not kwargs['host_documents']:
             texts = ['']
@@ -195,21 +202,21 @@ def get_embeddings(store_name:str, path:str, embeddings:HuggingFaceEmbeddings, *
 
     return metadata
 
+def convert_language_variable(language_variable):
+    # Define el patrón de búsqueda utilizando expresiones regulares
+    pattern = r'^(en)$|([a-z]{2})[-_]?([a-z]{2})?$'
 
+    # Intenta hacer el reemplazo
+    match = re.match(pattern, language_variable)
 
-    
-    
-            
+    value = None
+    if match:
+        # Si hay coincidencia con el patrón, toma la parte correspondiente del idioma
+        if match.group(1):
+            value =  'en_us'
+        elif match.group(2):
+            value = match.group(2)
+    else:
+        value = language_variable
 
-
-
-
-
-        
-
-    
-    
-    
-
-            
-        
+    return value

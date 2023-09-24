@@ -133,3 +133,4 @@ podcast_downloader/Embedding_store/
 podcast_downloader/transcripts/
 podcast_downloader/downloads/
 vectorstore/
+generated_files/

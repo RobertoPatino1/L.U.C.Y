@@ -1,13 +1,26 @@
-# ¡Bienvenid@ a Coach Chatbot! 🚀🤖
+# Welcome to Coach Chatbot! 🚀🤖
 
-¡Hola! Soy Lucy, tu coach personal. Estoy aquí para ayudarte en tu viaje de crecimiento y desarrollo personal. ¿En qué puedo asistirte hoy? 👩
+Hello! I'm Lucy, your personal coach. I am here to help you on your journey of personal growth and development. How can I assist you today? 👩
 
-**Recuerda que prefiero preguntas por encima de afirmaciones** 🪄❓
+## Questions over statements 🪄❓
 
-## Recursos Útiles 🔗
+To avoid strange responses, instead of writing **"I think I have no friends"** ❌, think about **"What can I do if I think I have no friends?"** ✅, remember that this is key in solution of situations in personal and professional development.
 
-- **Planificación y Metas:** Aprende a establecer y alcanzar tus metas con [Lucy's Goal Planner](https://lucycoaching.com/goal-planner) 📈
-- **Comunidad y Apoyo:** Únete a nuestra comunidad en [Lucy's Coaching Hub](https://lucycoaching.com/community) para compartir experiencias y recibir apoyo de otros miembros 💬
+I am excited to accompany you on this journey. Let's talk about your goals and how I can support you! 😊
 
-Estoy emocionada de acompañarte en este viaje. ¡Hablemos sobre tus metas y cómo puedo apoyarte! 💪😊
+## RSS Feed URL
+Get in on [here](https://getrssfeed.com/), where you have to paste the url of your favorite Google Podcast.
 
+## Supported languages
+- Inglés (English)
+- Español (Spanish)
+- Francés (Français)
+- Alemán (Deutsch)
+- Italiano
+- Holandés (Nederlands)
+- Hindi (हिंदी)
+- Chino (中文)
+- Finés (Suomi)
+- Ruso (Русский)
+- Ucraniano (Українська)
+- Vietnamita (Tiếng Việt)

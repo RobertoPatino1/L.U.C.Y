@@ -23,6 +23,7 @@ def slugify(value, allow_unicode=False):
     value = re.sub(r'[^\w\s-]', '', value.lower())
     return re.sub(r'[-\s]+', '-', value).strip('-_')
 
+
 # OS methods
 def get_root_dir():
     return './podcast_downloader'

@@ -1,6 +1,6 @@
 chainlit
 langchain
-transformers transformers[sentencepiece] sentencepiece
+transformers[sentencepiece]
 sentence-transformers
 beautifulsoup4
 lxml

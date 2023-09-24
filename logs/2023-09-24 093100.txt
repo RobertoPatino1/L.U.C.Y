@@ -1,0 +1,49 @@
+@vicbguti-espol ➜ /workspaces/Proyecto_PreTAWS_G4 (main) $ pip install ctransformers
+Collecting ctransformers
+  Obtaining dependency information for ctransformers from https://files.pythonhosted.org/packages/14/50/0b608e2abee4fc695b4e7ff5f569f5d32faf84a49e322034716fa157d1cf/ctransformers-0.2.27-py3-none-any.whl.metadata
+  Downloading ctransformers-0.2.27-py3-none-any.whl.metadata (17 kB)
+Requirement already satisfied: huggingface-hub in /usr/local/python/3.10.8/lib/python3.10/site-packages (from ctransformers) (0.17.2)
+Collecting py-cpuinfo<10.0.0,>=9.0.0 (from ctransformers)
+  Downloading py_cpuinfo-9.0.0-py3-none-any.whl (22 kB)
+Requirement already satisfied: filelock in /home/codespace/.local/lib/python3.10/site-packages (from huggingface-hub->ctransformers) (3.12.4)
+Requirement already satisfied: fsspec in /usr/local/python/3.10.8/lib/python3.10/site-packages (from huggingface-hub->ctransformers) (2023.9.2)
+Requirement already satisfied: requests in /home/codespace/.local/lib/python3.10/site-packages (from huggingface-hub->ctransformers) (2.31.0)
+Requirement already satisfied: tqdm>=4.42.1 in /usr/local/python/3.10.8/lib/python3.10/site-packages (from huggingface-hub->ctransformers) (4.66.1)
+Requirement already satisfied: pyyaml>=5.1 in /home/codespace/.local/lib/python3.10/site-packages (from huggingface-hub->ctransformers) (6.0.1)
+Requirement already satisfied: typing-extensions>=3.7.4.3 in /home/codespace/.local/lib/python3.10/site-packages (from huggingface-hub->ctransformers) (4.7.1)
+Requirement already satisfied: packaging>=20.9 in /home/codespace/.local/lib/python3.10/site-packages (from huggingface-hub->ctransformers) (23.1)
+Requirement already satisfied: charset-normalizer<4,>=2 in /home/codespace/.local/lib/python3.10/site-packages (from requests->huggingface-hub->ctransformers) (3.2.0)
+Requirement already satisfied: idna<4,>=2.5 in /home/codespace/.local/lib/python3.10/site-packages (from requests->huggingface-hub->ctransformers) (3.4)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /home/codespace/.local/lib/python3.10/site-packages (from requests->huggingface-hub->ctransformers) (2.0.4)
+Requirement already satisfied: certifi>=2017.4.17 in /home/codespace/.local/lib/python3.10/site-packages (from requests->huggingface-hub->ctransformers) (2023.7.22)
+Downloading ctransformers-0.2.27-py3-none-any.whl (9.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.9/9.9 MB 57.8 MB/s eta 0:00:00
+Installing collected packages: py-cpuinfo, ctransformers
+Successfully installed ctransformers-0.2.27 py-cpuinfo-9.0.0
+@vicbguti-espol ➜ /workspaces/Proyecto_PreTAWS_G4 (main) $ chainlit run app.py -w
+2023-09-24 14:20:12 - Load pretrained SentenceTransformer: intfloat/multilingual-e5-small
+2023-09-24 14:20:13 - Your app is available at http://localhost:8000
+2023-09-24 14:20:53 - 1 change detected
+2023-09-24 14:20:53 - 1 change detected
+2023-09-24 14:21:53 - 1 change detected
+2023-09-24 14:21:53 - 1 change detected
+/usr/local/python/3.10.8/lib/python3.10/site-packages/transformers/models/marian/tokenization_marian.py:194: UserWarning: Recommended: pip install sacremoses.
+  warnings.warn("Recommended: pip install sacremoses.")
+2023-09-24 14:22:07 - Loading faiss with AVX2 support.
+2023-09-24 14:22:07 - Successfully loaded faiss with AVX2 support.
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 33.00it/s]
+Downloading (…)5c7f1dbf/config.json: 100%|███████████████████████████████████████████████████████████████████████████████████| 29.0/29.0 [00:00<00:00, 106kB/s]
+Fetching 1 files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.74it/s]
+Downloading (…)chat.ggmlv3.q2_K.bin: 100%|█████████████████████████████████████████████████████████████████████████████████| 2.87G/2.87G [00:12<00:00, 232MB/s]
+Fetching 1 files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:12<00:00, 12.43s/it]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.40it/s]
+Downloading (…)lve/main/config.json: 100%|█████████████████████████████████████████████████████████████████████████████████| 1.44k/1.44k [00:00<00:00, 444kB/s]
+Downloading pytorch_model.bin: 100%|████████████████████████████████████████████████████████████████████████████████████████| 312M/312M [00:11<00:00, 27.4MB/s]
+Downloading (…)neration_config.json: 100%|████████████████████████████████████████████████████████████████████████████████████| 293/293 [00:00<00:00, 1.39MB/s]
+Downloading (…)okenizer_config.json: 100%|███████████████████████████████████████████████████████████████████████████████████| 44.0/44.0 [00:00<00:00, 234kB/s]
+Downloading (…)olve/main/source.spm: 100%|██████████████████████████████████████████████████████████████████████████████████| 826k/826k [00:00<00:00, 5.72MB/s]
+Downloading (…)olve/main/target.spm: 100%|██████████████████████████████████████████████████████████████████████████████████| 802k/802k [00:00<00:00, 8.44MB/s]
+Downloading (…)olve/main/vocab.json: 100%|████████████████████████████████████████████████████████████████████████████████| 1.59M/1.59M [00:00<00:00, 19.4MB/s]
+/usr/local/python/3.10.8/lib/python3.10/site-packages/transformers/models/marian/tokenization_marian.py:194: UserWarning: Recommended: pip install sacremoses.
+  warnings.warn("Recommended: pip install sacremoses.")
+--- 223.6448895931244 seconds ---

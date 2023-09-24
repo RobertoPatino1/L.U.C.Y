@@ -17,7 +17,7 @@ from langchain.callbacks import get_openai_callback
 
 from transformers import pipeline
 
-from podcast_downloader.podcast import load_embeddings
+from podcast_downloader.podcast import load_embeddings, convert_language_variable
 from podcast_downloader.podcast import Podcast
 
 # Default Podcast variable
@@ -216,7 +216,7 @@ aget_ts_message = make_async(get_ts_message)
 @cl.on_chat_start
 async def start():
     # Set starting variables
-    await cl.Message(content=f'Starting with, \n Podcast: {default_podcast.name}\n Your spoken language: {list(language_codes.keys())[0]}').send()
+    # await cl.Message(content=f'Starting with, \n Podcast: {default_podcast.name}\n Your spoken language: {list(language_codes.keys())[0]}').send()
     await cl.Message(content='Complete the required fields on Chat Settings to start').send()
 
     cl.user_session.set('podcast', default_podcast)
@@ -259,7 +259,7 @@ async def start():
 async def setup_agent(settings):
     reverse_dict = {f'{x[1]}': f'{x[0]}' for x in language_codes.items()}
     if settings['assembly_ai_api_key'] != None:
-        src = settings["src"]
+        src = settings["src"] if settings["src"] != None else 'en_us'
         cl.user_session.set('able_to_chat', True)
         if settings['PodcastName'] != None and settings['RSS'] != None and requests.get(settings['RSS']).status_code == 200:
             if settings['Model'] == 'gpt-3.5-turbo' and settings['gpt_api_key'] == None: 
@@ -278,7 +278,7 @@ async def setup_agent(settings):
                             'rss_feed_url':podcast.rss_feed_url,
                                 'language': podcast.get_ts_language(),
                                 'assembly_key': settings['assembly_ai_api_key'],
-                                'src': src}, f)
+                                'src': convert_language_variable(src)}, f)
         cl.user_session.set('able_to_chat', True)
     else:
         await cl.Message(content='Enter an Assembly AI API Key').send()
@@ -301,7 +301,7 @@ async def main(message, message_id):
         dst = "en" if podcast_data['language'] == "en_us" else podcast_data['language']
 
         ts_message = await aget_ts_message(message, src, dst)
-        # await update_data(ts_message, k=2)
+        await update_data(ts_message, k=2)
         chain = await aqa_bot()
 
         cb = cl.AsyncLangchainCallbackHandler(
@@ -325,7 +325,6 @@ async def main(message, message_id):
             output_path = await aget_audio(ts_answer, message_id, speaker_id, cl.user_session.get('settings')['eleven_labs_api_key'])
             cl.user_session.get('audios').append(cl.Audio(path=output_path, display='inline'))
             audios = cl.user_session.get('audios')
-            output_path = 'generated_files/audio_files/audio_28fd2a56-e7d4-46d6-98ab-078a8750e0d1.mp3'
             await cl.Message(
                 content='Generated audio',
                 elements=[audios[-1]],

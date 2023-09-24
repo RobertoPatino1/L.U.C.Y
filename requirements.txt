@@ -1,0 +1,10 @@
+chainlit
+langchain
+transformers transformers[sentencepiece] sentencepiece
+sentence-transformers
+beautifulsoup4
+lxml
+faiss-cpu
+ctransformers
+
+# faiss-gpu # to run on gpu

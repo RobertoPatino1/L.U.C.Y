@@ -7,3 +7,7 @@
 # Ejecutar el programa en chainlit
 
 `chainlit run app.py -w`
+
+# Presentation
+
+[PowerPoint presentation](https://bit.ly/lucy-chatbot-presentation)

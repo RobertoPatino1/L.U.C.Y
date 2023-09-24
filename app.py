@@ -5,6 +5,7 @@ import os
 
 import chainlit as cl
 from chainlit.input_widget import Select, Switch, TextInput
+from chainlit import make_async
 
 from langchain import PromptTemplate
 from langchain.llms import CTransformers
@@ -110,6 +111,8 @@ def get_audio(text:str, chat_id:int, speaker_id:str, api_key:str):
 
     return output_path
 
+aget_audio = make_async(get_audio)
+
 def get_episodes_metadata(podcast_items):
     episode_urls = [podcast.find('enclosure')['url'] for podcast in podcast_items]
     episode_titles = [podcast.find('title').text for podcast in podcast_items]
@@ -178,8 +181,9 @@ def load_llm(open_ai_api_key:str=None):
     return llm
 
 #QA Model Function
-async def qa_bot():
-    openai_api_key = cl.user_session.get('settings')['gpt_api_key']
+def qa_bot():
+    # openai_api_key = cl.user_session.get('settings')['gpt_api_key']
+    openai_api_key = None
     podcast = cl.user_session.get('podcast')
     embeddings = load_embeddings()
     db = FAISS.load_local(podcast.db_faiss_path, embeddings)
@@ -189,6 +193,8 @@ async def qa_bot():
     qa = retrieval_qa_chain(llm, qa_prompt, db)
 
     return qa
+
+aqa_bot = make_async(qa_bot)
         
 @cl.cache
 def load_pipeline(src:str, dst:str):
@@ -203,6 +209,8 @@ def get_ts_message(message:str, src:str, dst:str):
         return translator(message)[0]["translation_text"]
     else:
         return message
+    
+aget_ts_message = make_async(get_ts_message)
 
 # chainlit code
 @cl.on_chat_start
@@ -240,10 +248,18 @@ async def start():
                         ]
     settings = await cl.ChatSettings(settings_widgets).send() 
 
+    with open('podcast.json', 'w') as f:
+                    json.dump({'name':default_podcast.name, 
+                            'rss_feed_url':default_podcast.rss_feed_url,
+                                'language': default_podcast.get_ts_language(),
+                                'assembly_key': None,
+                                'src': "en"}, f)
+
 @cl.on_settings_update
 async def setup_agent(settings):
     reverse_dict = {f'{x[1]}': f'{x[0]}' for x in language_codes.items()}
     if settings['assembly_ai_api_key'] != None:
+        src = settings["src"]
         cl.user_session.set('able_to_chat', True)
         if settings['PodcastName'] != None and settings['RSS'] != None and requests.get(settings['RSS']).status_code == 200:
             if settings['Model'] == 'gpt-3.5-turbo' and settings['gpt_api_key'] == None: 
@@ -252,11 +268,9 @@ async def setup_agent(settings):
                 await cl.Message(content='Enter a Eleven Labs API Key').send()
             else:
                 podcast = Podcast(settings['PodcastName'], settings['RSS'])
-                src = settings["src"]
                 cl.user_session.set('podcast', podcast)
         else:
             podcast = cl.user_session.get('podcast')
-            src = 'en_us' 
      
         await cl.Message(f'Successful podcast load,\n Podcast: {podcast.name}\n Your spoken language: {reverse_dict[src]}').send()
         with open('podcast.json', 'w') as f:
@@ -267,14 +281,12 @@ async def setup_agent(settings):
                                 'src': src}, f)
         cl.user_session.set('able_to_chat', True)
     else:
-        podcast = cl.user_session.get("podcast")
         await cl.Message(content='Enter an Assembly AI API Key').send()
         cl.user_session.set('able_to_chat', False)
         
             
     cl.user_session.set('settings', settings)
-    
-    
+
 @cl.on_message
 async def main(message, message_id):
     # Empezar temporizador
@@ -288,11 +300,9 @@ async def main(message, message_id):
         src = "en" if podcast_data['src'] == "en_us" else podcast_data['src']
         dst = "en" if podcast_data['language'] == "en_us" else podcast_data['language']
 
-        ts_message = get_ts_message(message, src, dst)
-        await update_data(ts_message, k=2)
-        chain = await qa_bot()
-        msg = cl.Message(content="Getting data...")
-        await msg.send()
+        ts_message = await aget_ts_message(message, src, dst)
+        # await update_data(ts_message, k=2)
+        chain = await aqa_bot()
 
         cb = cl.AsyncLangchainCallbackHandler(
             stream_final_answer=True, answer_prefix_tokens=["FINAL", "ANSWER"]
@@ -301,23 +311,25 @@ async def main(message, message_id):
         res = await chain.acall(ts_message, callbacks=[cb])
         # Obtener respuesta del LLM
         answer = res["result"] 
-        ts_answer = get_ts_message(answer, dst, src)
-        await cl.Message(content=ts_answer).send()
         sources = res["source_documents"]
 
-        if cl.user_session.get('settings')['text_to_speech']:
-            output_path = get_audio(ts_answer, message_id, speaker_id, cl.user_session.get('settings')['eleven_labs_api_key'])
-            cl.user_session.get('audios').append(cl.Audio(path=output_path, display='inline'))
-            audios = cl.user_session.get('audios')
-            await cl.Message(
-                content='Generated audio',
-                elements=[audios[-1]],
-            ).send()
-
+        ts_answer = await aget_ts_message(answer, dst, src)
+        
+        await cl.Message(content=ts_answer).send()
         src_message = "Sources:\n\n\n" 
         for document in sources:
             src_message += f"Podcast: {document.metadata['podcast']}\n Episode: {document.metadata['episode']}\n"
             src_message += f"Content: \n{document.page_content}\n\n"
+
+        if cl.user_session.get('settings')['text_to_speech']:
+            output_path = await aget_audio(ts_answer, message_id, speaker_id, cl.user_session.get('settings')['eleven_labs_api_key'])
+            cl.user_session.get('audios').append(cl.Audio(path=output_path, display='inline'))
+            audios = cl.user_session.get('audios')
+            output_path = 'generated_files/audio_files/audio_28fd2a56-e7d4-46d6-98ab-078a8750e0d1.mp3'
+            await cl.Message(
+                content='Generated audio',
+                elements=[audios[-1]],
+            ).send()
             
         await cl.Message(content=src_message).send()
 

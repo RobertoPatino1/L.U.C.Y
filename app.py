@@ -146,7 +146,7 @@ def set_custom_prompt():
     with open('ts_prompts.json', 'r') as f:
         ts_prompts = json.load(f)
     
-    language = podcast_data['language']
+    language = "en_us" if podcast_data['language'] == "en" else podcast_data['language']
     ts_prompt = ts_prompts[language]
 
 
@@ -301,6 +301,7 @@ async def main(message, message_id):
         dst = "en" if podcast_data['language'] == "en_us" else podcast_data['language']
 
         ts_message = await aget_ts_message(message, src, dst)
+
         await update_data(ts_message, k=2)
         chain = await aqa_bot()
 

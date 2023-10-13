@@ -1,4 +1,4 @@
-# Proyecto_PreTAWS_G4
+# L.U.C.Y
 
 https://github.com/RobertoPatino1/Proyecto_PreTAWS_G4/assets/133924738/87d04881-e17f-4e7f-acee-11bd71f3ee04
 

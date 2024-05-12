@@ -239,6 +239,8 @@ async def setup_agent(settings):
             podcast = cl.user_session.get('podcast')
      
         await cl.Message(f'Successful podcast load,\n Podcast: {podcast.name}\n Your spoken language: {reverse_dict[src]}').send()
+        
+        os.environ["assembly_ai_api_key"] = settings['assembly_ai_api_key']
         with open('podcast.json', 'w') as f:
                     json.dump({'name':podcast.name, 
                             'rss_feed_url':podcast.rss_feed_url,

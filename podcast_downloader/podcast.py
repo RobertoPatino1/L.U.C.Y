@@ -2,8 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import os
 import pickle
-import json
-import subprocess
 
 import sys
 sys.path.append('./')
@@ -17,6 +15,8 @@ from langchain.vectorstores import FAISS
 import re
 
 from functools import cache
+
+import assemblyai as aai 
 
 DATA_PATH = './podcast_downloader/transcripts'
 
@@ -95,11 +95,12 @@ class Podcast:
         slugified_episode = slugify(title)
         transcripts_paths = os.listdir(self.transcription_directory)
         if f'{slugified_episode}.txt' not in transcripts_paths:
-            self.generate_transcript(slugified_episode, url)
+            transcript_directory = f'{self.transcription_directory}/{slugified_episode}.txt'
+            generate_transcript(transcript_directory, url, self.get_ts_language())
 
             db = None
 
-            loader = TextLoader(f'{self.transcription_directory}/{slugified_episode}.txt')
+            loader = TextLoader(transcript_directory)
             documents = loader.load()
             text_splitter = RecursiveCharacterTextSplitter(chunk_size=400, chunk_overlap=50)
             docs = text_splitter.split_documents(documents)
@@ -114,19 +115,6 @@ class Podcast:
                 db.add_documents(documents=docs)
                  
             db.save_local(self.db_faiss_path)
-
-    def generate_transcript(self, episode_path, url):
-        # Obtener el path del transcript
-        download_episode_path = f'{self.download_directory}/{episode_path}.mp3'
-        print("Download path: ", download_episode_path)
-        # Post de la metadata del podcast a obtener el transcript
-        episode_metadata_json = {'url': url, 'download_episode_path': download_episode_path}
-        with open(f'{base_dir}/podcast_metadata.json', 'w') as f:
-            json.dump(episode_metadata_json, f)
-        
-        # subprocess.run([f'{base_dir}/run_all.sh'])
-        subprocess.call(['python', f'{base_dir}/download_podcasts.py'])
-        subprocess.call(['python', f'{base_dir}/transcriptions.py'])
         
     # Helpers methods
     def get_items(self):
@@ -220,3 +208,12 @@ def convert_language_variable(language_variable):
         value = language_variable
 
     return value
+
+def generate_transcript(episode_path, url, language_code):
+    aai.settings.api_key = os.getenv('assembly_ai_api_key')
+    transcriber = aai.Transcriber()
+    config = aai.TranscriptionConfig(language_code=language_code)
+    transcript = transcriber.transcribe(url, config)
+
+    with open(episode_path, "w") as archivo:
+        archivo.write(transcript.text)

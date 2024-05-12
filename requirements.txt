@@ -1,10 +1,12 @@
-chainlit
-langchain
+chainlit==0.7.0
+langchain==0.0.285
 transformers[sentencepiece]
 sentence-transformers
-beautifulsoup4
+beautifulsoup4==4.12.2
 lxml
 faiss-cpu
 ctransformers
+translate
+assemblyai
 
 # faiss-gpu # to run on gpu
